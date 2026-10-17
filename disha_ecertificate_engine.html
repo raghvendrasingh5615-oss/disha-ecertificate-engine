@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DISHA E-Certificate Engine & Verification Module | Dept. of CSE, MBM University</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Sanchez:ital@0;1&display=swap" rel="stylesheet">
+  <!-- Vendor libraries (JSZip & jsPDF via CDN for standalone portability) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <style>
+    :root {
+      --primary: #12439c;
+      --primary-hover: #0d347c;
+      --primary-light: #e8f0fe;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --danger: #ef4444;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      color: var(--gray-800);
+      background-color: var(--gray-50);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .disha-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+    }
+    .brand-crest {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #12439c, #1e3a8a);
+      color: white;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 10px rgba(18, 67, 156, 0.3);
+    }
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+    }
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+    .nav-links { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--gray-600);
+      transition: var(--transition);
+    }
+    .nav-btn.active {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      border-color: rgba(18, 67, 156, 0.2);
+    }
+
+    /* Views */
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    /* Portal View Styles */
+    .portal-hero {
+      background: linear-gradient(135deg, #0a2558 0%, #12439c 50%, #1976d2 100%);
+      color: white;
+      padding: 3rem 1.5rem 4rem;
+      text-align: center;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .hero-desc {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 600px;
+      margin: 0 auto 1.75rem;
+    }
+    .search-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 0.65rem;
+      box-shadow: 0 20px 40px rgba(10, 37, 88, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      font-size: 1.1rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--gray-900);
+      text-transform: uppercase;
+      padding-left: 0.75rem;
+    }
+    .search-input:focus { outline: none; }
+    .search-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .quick-test-bar {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .quick-pill {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .portal-main {
+      max-width: 1050px;
+      margin: -2rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+    .verification-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+    }
+    .verification-status-banner {
+      background: linear-gradient(90deg, #ecfdf5 0%, #d1fae5 100%);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .record-details-grid {
+      padding: 1.5rem 1.75rem;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .record-item { display: flex; flex-direction: column; }
+    .record-label { font-size: 0.72rem; text-transform: uppercase; color: var(--gray-500); font-weight: 600; }
+    .record-val { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); }
+    .record-val.highlight { color: var(--primary); font-family: var(--font-mono); }
+    
+    .certificate-preview-area {
+      padding: 2rem 1.75rem;
+      background: #f8fafc;
+      display: flex;
+      justify-content: center;
+    }
+    .certificate-image-container {
+      width: 100%;
+      max-width: 960px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      line-height: 0;
+      background: white;
+    }
+    .certificate-flat-img { width: 100%; height: auto; display: block; }
+
+    .action-buttons-bar {
+      padding: 1.25rem 1.75rem;
+      background: white;
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--gray-300);
+      background: white;
+      color: var(--gray-700);
+      text-decoration: none;
+    }
+    .action-btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .action-btn-accent { background: var(--accent); color: white; border-color: var(--accent); }
+
+    /* Admin View Styles */
+    .admin-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 65px);
+    }
+    .editor-toolbar {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0.65rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .editor-workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .canvas-viewport {
+      flex: 1;
+      background: #181c24;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: auto;
+      padding: 2rem;
+    }
+    .canvas-wrapper {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      overflow: visible;
+    }
+    #adminCanvas { display: block; background: #fff; border-radius: 4px; }
+    .inspector-sidebar {
+      width: 360px;
+      background: white;
+      border-left: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1.25rem;
+      gap: 1.25rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-label { font-size: 0.78rem; font-weight: 600; color: var(--gray-700); }
+    .form-input, .form-select {
+      padding: 0.45rem 0.65rem;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-sm);
+      font-size: 0.825rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+    .bottom-drawer {
+      background: white;
+      border-top: 1px solid var(--gray-200);
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-header {
+      padding: 0.5rem 1.25rem;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      font-weight: 700;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .drawer-body {
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+      flex: 1;
+      overflow: hidden;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .data-table th, .data-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+      text-align: left;
+    }
+    .data-table th { background: var(--gray-50); position: sticky; top: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="disha-header">
+    <div class="header-inner">
+      <div class="brand-wrapper">
+        <div class="brand-crest">D</div>
+        <div class="brand-info">
+          <span class="brand-title">D I S H A</span>
+          <span class="brand-sub">DEPT OF CSE, MBM UNIVERSITY • JODHPUR</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <button id="navPortalBtn" class="nav-btn active">Student Verification Portal</button>
+        <button id="navAdminBtn" class="nav-btn">Admin Template Mapper</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Route 1: Student Verification Portal (/ecertificates) -->
+  <section id="portalView" class="view-section active">
+    <div class="portal-hero">
+      <div style="font-size:0.8rem; font-weight:700; letter-spacing:0.05em; margin-bottom:0.75rem;">
+        MBM UNIVERSITY • CSE DEPARTMENT
+      </div>
+      <h1 class="hero-title">Verify & Authenticate E-Certificate</h1>
+      <p class="hero-desc">
+        Lookup and verify institutional certificates with 100% pixel-perfect bitmap rendering.
+      </p>
+
+      <div class="search-card">
+        <input type="text" id="portalSearchInput" class="search-input" value="24CVSCB013" placeholder="Enter Certificate Number">
+        <button id="portalSearchBtn" class="search-btn">Verify Certificate</button>
+      </div>
+
+      <div class="quick-test-bar">
+        <span>Trial Certificate:</span>
+        <button type="button" id="portalQuickTestBtn" class="quick-pill">24CVSCB013 (Mayank Aggarwal)</button>
+      </div>
+    </div>
+
+    <main class="portal-main">
+      <div id="portalResultCard" class="verification-card">
+        <div class="verification-status-banner">
+          <div>
+            <div style="font-weight:700; color:#065f46; font-size:1.15rem;">✓ Official Certificate Verified</div>
+            <div style="font-size:0.8rem; color:#047857;">Authenticated against CSE Department Database</div>
+          </div>
+          <div style="background:#047857; color:white; padding:0.3rem 0.8rem; border-radius:9999px; font-size:0.75rem; font-weight:700;">
+            Verified & Valid
+          </div>
+        </div>
+
+        <div class="record-details-grid">
+          <div class="record-item">
+            <span class="record-label">Candidate Name</span>
+            <span id="portalStudentName" class="record-val">Mayank Aggarwal</span>
+          </div>
+          <div class="record-item">
+            <span class="record-label">Certificate Number</span>
+            <span id="portalCertNo" class="record-val highlight">24CVSCB013</span>
+          </div>
+          <div class="record-item">
+            <span class="record-label">Branch & Year</span>
+            <span id="portalBranch" class="record-val">Computer Science & Engineering (I Year)</span>
+          </div>
+          <div class="record-item">
+            <span class="record-label">Event</span>
+            <span id="portalEvent" class="record-val">Computer Vision based Smart Conveyer Belt Workshop</span>
+          </div>
+          <div class="record-item">
+            <span class="record-label">Date of Issue</span>
+            <span id="portalDate" class="record-val">2024-06-26</span>
+          </div>
+        </div>
+
+        <!-- The Single Flat Image Display -->
+        <div class="certificate-preview-area">
+          <div class="certificate-image-container">
+            <img id="portalFlatImage" class="certificate-flat-img" src="" alt="Verified Certificate Bitmap">
+          </div>
+        </div>
+
+        <div class="action-buttons-bar">
+          <div style="display:flex; gap:0.75rem;">
+            <button id="portalDownloadPngBtn" class="action-btn action-btn-primary">Download High-Res PNG</button>
+            <button id="portalDownloadPdfBtn" class="action-btn action-btn-accent">Download Print-Ready PDF</button>
+            <button id="portalPrintBtn" class="action-btn">Print</button>
+          </div>
+          <span style="font-size:0.8rem; color:var(--gray-500);">Zero CSS layout shift guarantee</span>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Route 2: Admin Bulk Create & Template Mapper (/admin) -->
+  <section id="adminView" class="view-section">
+    <div class="admin-container">
+      <div class="editor-toolbar">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <input type="file" id="adminUploadTemplate" accept="image/*" style="display:none;">
+          <button class="action-btn" onclick="document.getElementById('adminUploadTemplate').click();">
+            Upload Blank Template
+          </button>
+          <span id="adminDimsBadge" style="font-family:var(--font-mono); font-size:0.75rem; background:var(--gray-100); padding:0.3rem 0.6rem; border-radius:4px;">
+            1563 × 1105 px
+          </span>
+        </div>
+
+        <div style="display:flex; gap:0.5rem;">
+          <button id="adminModeMapper" class="action-btn action-btn-primary">📐 Bounding Box Mapper</button>
+          <button id="adminModePreview" class="action-btn">👁️ Live Student Preview</button>
+        </div>
+
+        <div style="display:flex; gap:0.75rem;">
+          <button id="adminBulkZipBtn" class="action-btn action-btn-accent">Bulk Download ZIP (PNGs)</button>
+          <button id="adminSaveConfigBtn" class="action-btn action-btn-primary">Save Coordinate Mapping</button>
+        </div>
+      </div>
+
+      <div class="editor-workspace">
+        <div class="canvas-viewport">
+          <div class="canvas-wrapper">
+            <canvas id="adminCanvas"></canvas>
+          </div>
+        </div>
+
+        <aside class="inspector-sidebar">
+          <div style="font-family:var(--font-heading); font-weight:700; font-size:1rem;">
+            Canva-Style Element Inspector
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Active Field</label>
+            <select id="adminFieldSelect" class="form-select"></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Native Coordinates & MaxWidth</label>
+            <div class="form-row">
+              <div><span style="font-size:0.7rem;">X</span><input type="number" id="adminX" class="form-input"></div>
+              <div><span style="font-size:0.7rem;">Y</span><input type="number" id="adminY" class="form-input"></div>
+            </div>
+            <div class="form-row" style="margin-top:0.4rem;">
+              <div><span style="font-size:0.7rem;">MaxWidth</span><input type="number" id="adminMaxWidth" class="form-input"></div>
+              <div><span style="font-size:0.7rem;">Height</span><input type="number" id="adminHeight" class="form-input"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Typography</label>
+            <div class="form-row">
+              <div>
+                <span style="font-size:0.7rem;">Font Family</span>
+                <select id="adminFontFamily" class="form-select">
+                  <option value="Roboto">Roboto</option>
+                  <option value="Sanchez">Sanchez</option>
+                  <option value="Outfit">Outfit</option>
+                  <option value="Inter">Inter</option>
+                </select>
+              </div>
+              <div>
+                <span style="font-size:0.7rem;">Font Size (px)</span>
+                <input type="number" id="adminFontSize" class="form-input">
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:0.4rem;">
+              <div>
+                <span style="font-size:0.7rem;">Font Weight</span>
+                <select id="adminFontWeight" class="form-select">
+                  <option value="400">Regular (400)</option>
+                  <option value="500">Medium (500)</option>
+                  <option value="700">Bold (700)</option>
+                </select>
+              </div>
+              <div>
+                <span style="font-size:0.7rem;">Color</span>
+                <input type="color" id="adminColor" class="form-input" style="height:35px; padding:2px;">
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:0.4rem;">
+              <div>
+                <span style="font-size:0.7rem;">Align</span>
+                <select id="adminTextAlign" class="form-select">
+                  <option value="center">Center</option>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </div>
+              <div>
+                <span style="font-size:0.7rem;">Transform</span>
+                <select id="adminTextTransform" class="form-select">
+                  <option value="none">None</option>
+                  <option value="uppercase">Uppercase</option>
+                  <option value="capitalize">Capitalize</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button id="adminAddColBtn" class="action-btn" style="width:100%; justify-content:center;">
+            + Add Custom Field
+          </button>
+        </aside>
+      </div>
+
+      <!-- Bottom Drawer: CSV & Auto Generator -->
+      <div class="bottom-drawer">
+        <div class="drawer-header">
+          <span>Student Records & Auto Certificate Number Generator</span>
+          <span id="adminStudentCount">13 Students</span>
+        </div>
+        <div class="drawer-body">
+          <div style="display:flex; flex-direction:column; gap:0.75rem; background:var(--gray-50); padding:1rem; border-radius:8px;">
+            <div style="font-weight:700; font-size:0.85rem;">Auto Generator Config</div>
+            <div class="form-row">
+              <div><span style="font-size:0.7rem;">Prefix</span><input type="text" id="adminPrefix" class="form-input" value="24CVSCB"></div>
+              <div><span style="font-size:0.7rem;">Start Serial</span><input type="number" id="adminStartSerial" class="form-input" value="1"></div>
+            </div>
+            <div>
+              <span style="font-size:0.7rem;">Padding Digits</span>
+              <input type="number" id="adminPadding" class="form-input" value="3">
+            </div>
+            <button id="adminApplySerialBtn" class="action-btn action-btn-accent" style="justify-content:center;">
+              Apply Auto Numbers
+            </button>
+            <div style="display:flex; gap:0.5rem; margin-top:auto;">
+              <input type="file" id="adminCsvInput" accept=".csv" style="display:none;">
+              <button class="action-btn" onclick="document.getElementById('adminCsvInput').click();" style="flex:1;">
+                Upload CSV
+              </button>
+              <button id="adminLoadSampleCsv" class="action-btn action-btn-primary" style="flex:1;">
+                Sample CSV
+              </button>
+            </div>
+          </div>
+
+          <div style="overflow:auto; border:1px solid var(--gray-200); border-radius:8px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Candidate Name</th>
+                  <th>Cert #</th>
+                  <th>Branch / Institute</th>
+                  <th>Class</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Embedded Self-Contained Engine Script
+    (function() {
+      // Authentic Initial Dataset
+      let templateConfig = {
+        imageUrl: '/template.png',
+        naturalWidth: 1563,
+        naturalHeight: 1105,
+        fields: {
+          cert_no: { label: 'Certificate Number', placeholder: 'Cert. No. {cert_no}', x: 960, y: 78, maxWidth: 460, height: 35, fontSize: 22, fontFamily: 'Roboto', fontWeight: '500', color: '#1e293b', textAlign: 'right' },
+          name: { label: 'Candidate Name', placeholder: '{name}', x: 380, y: 545, maxWidth: 800, height: 75, fontSize: 62, fontFamily: 'Roboto', fontWeight: '700', color: '#0f172a', textAlign: 'center', textTransform: 'uppercase' },
+          year: { label: 'Class / Year', placeholder: '{year}', x: 285, y: 672, maxWidth: 168, height: 38, fontSize: 26, fontFamily: 'Roboto', fontWeight: '500', color: '#1e293b', textAlign: 'center' },
+          branch: { label: 'Branch / Institute', placeholder: '{branch}', x: 785, y: 672, maxWidth: 580, height: 38, fontSize: 26, fontFamily: 'Roboto', fontWeight: '500', color: '#1e293b', textAlign: 'center', textTransform: 'capitalize' },
+          verification_url: { label: 'Verification Notice', placeholder: 'Verify online at https://disha.mbm.ac.in/ecertificates?cert={cert_no}', x: 380, y: 1025, maxWidth: 800, height: 25, fontSize: 15, fontFamily: 'Roboto', fontWeight: '400', color: '#64748b', textAlign: 'center', fontStyle: 'italic' }
+        }
+      };
+
+      let students = [
+        { cert_no: '24CVSCB001', name: 'Kuldeep Singh', branch: 'Computer Science & Engineering', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB002', name: 'Mohit Gaur', branch: 'Information Technology', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB003', name: 'Jinal Soni', branch: 'Computer Science & Engineering', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB004', name: 'Bhavesh Tak', branch: 'Building & Construction Engineering', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB005', name: 'Rohan Mangal', branch: 'Information Technology', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB006', name: 'Sanjay Jakhar', branch: 'Mechanical Engineering', year: 'II Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB007', name: 'Jatin Saini', branch: 'Electronics & Communication Engineering', year: 'II Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB008', name: 'Mridul Bansal', branch: 'Information Technology', year: 'II Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB009', name: 'Nishtha Jain', branch: 'Electronics & Computer Engineering', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB010', name: 'Riya Shekhawat', branch: 'Electronics & Electrical Engineering', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB011', name: 'Yuvadhan Singh Rutia', branch: 'Electrical Engineering', year: 'II Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB012', name: 'Ketan', branch: 'Computer Science & Engineering', year: 'II Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' },
+        { cert_no: '24CVSCB013', name: 'Mayank Aggarwal', branch: 'Computer Science & Engineering', year: 'I Year', event: 'Computer Vision based Smart Conveyer Belt Workshop', date: '2024-06-26' }
+      ];
+
+      let selectedField = 'name';
+      let adminMode = 'mapper'; // 'mapper' or 'preview'
+      let previewStudentIdx = 12; // 24CVSCB013
+      let templateImg = new Image();
+      templateImg.crossOrigin = 'anonymous';
+      let templateLoaded = false;
+      let zoom = 0.58;
+
+      // Admin Canvas
+      const adminCanvas = document.getElementById('adminCanvas');
+      const adminCtx = adminCanvas.getContext('2d');
+
+      // Portal Elements
+      const portalFlatImage = document.getElementById('portalFlatImage');
+      let currentFlatDataUrl = '';
+
+      async function start() {
+        await document.fonts.ready;
+        bindNav();
+        bindPortal();
+        bindAdmin();
+
+        templateImg.onload = () => {
+          templateLoaded = true;
+          templateConfig.naturalWidth = templateImg.naturalWidth;
+          templateConfig.naturalHeight = templateImg.naturalHeight;
+          document.getElementById('adminDimsBadge').textContent = `${templateImg.naturalWidth} × ${templateImg.naturalHeight} px`;
+          renderAdminCanvas();
+          verifyPortalCert('24CVSCB013');
+        };
+        templateImg.src = templateConfig.imageUrl;
+      }
+
+      function bindNav() {
+        const portalBtn = document.getElementById('navPortalBtn');
+        const adminBtn = document.getElementById('navAdminBtn');
+        const portalView = document.getElementById('portalView');
+        const adminView = document.getElementById('adminView');
+
+        portalBtn.addEventListener('click', () => {
+          portalBtn.classList.add('active');
+          adminBtn.classList.remove('active');
+          portalView.classList.add('active');
+          adminView.classList.remove('active');
+        });
+
+        adminBtn.addEventListener('click', () => {
+          adminBtn.classList.add('active');
+          portalBtn.classList.remove('active');
+          adminView.classList.add('active');
+          portalView.classList.remove('active');
+          renderAdminCanvas();
+        });
+      }
+
+      // Portal Logic
+      function bindPortal() {
+        document.getElementById('portalSearchBtn').addEventListener('click', () => {
+          verifyPortalCert(document.getElementById('portalSearchInput').value.trim().toUpperCase());
+        });
+        document.getElementById('portalQuickTestBtn').addEventListener('click', () => {
+          document.getElementById('portalSearchInput').value = '24CVSCB013';
+          verifyPortalCert('24CVSCB013');
+        });
+
+        document.getElementById('portalDownloadPngBtn').addEventListener('click', () => {
+          if (!currentFlatDataUrl) return;
+          const a = document.createElement('a');
+          a.href = currentFlatDataUrl;
+          a.download = `Certificate_${document.getElementById('portalCertNo').textContent}.png`;
+          a.click();
+        });
+
+        document.getElementById('portalDownloadPdfBtn').addEventListener('click', () => {
+          if (!currentFlatDataUrl || !window.jspdf) return;
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+          pdf.addImage(currentFlatDataUrl, 'PNG', 0, 0, 297, 210, undefined, 'FAST');
+          pdf.save(`Certificate_${document.getElementById('portalCertNo').textContent}.pdf`);
+        });
+
+        document.getElementById('portalPrintBtn').addEventListener('click', () => window.print());
+      }
+
+      async function verifyPortalCert(certNo) {
+        const student = students.find(s => s.cert_no.toUpperCase() === certNo.toUpperCase());
+        if (!student) {
+          alert('Certificate number not found: ' + certNo);
+          return;
+        }
+
+        document.getElementById('portalStudentName').textContent = student.name;
+        document.getElementById('portalCertNo').textContent = student.cert_no;
+        document.getElementById('portalBranch').textContent = `${student.branch} (${student.year})`;
+        document.getElementById('portalEvent').textContent = student.event;
+        document.getElementById('portalDate').textContent = student.date;
+
+        // Render to offscreen canvas
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = templateConfig.naturalWidth;
+        offCanvas.height = templateConfig.naturalHeight;
+        const offCtx = offCanvas.getContext('2d');
+
+        offCtx.drawImage(templateImg, 0, 0);
+
+        Object.keys(templateConfig.fields).forEach(k => {
+          const f = templateConfig.fields[k];
+          let val = student[k] || '';
+          let text = f.placeholder ? f.placeholder.replace(`{${k}}`, val).replace('{cert_no}', student.cert_no) : val;
+          if (f.textTransform === 'uppercase') text = text.toUpperCase();
+          if (f.textTransform === 'capitalize') text = text.replace(/\b\w/g, c => c.toUpperCase());
+
+          let fs = f.fontSize || 24;
+          offCtx.save();
+          offCtx.font = `${f.fontWeight || 400} ${fs}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+
+          // Auto font shrinking
+          while (offCtx.measureText(text).width > f.maxWidth && fs > 8) {
+            fs -= 1;
+            offCtx.font = `${f.fontWeight || 400} ${fs}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+          }
+
+          offCtx.fillStyle = f.color || '#000000';
+          offCtx.textBaseline = 'middle';
+
+          let tx = f.x;
+          if (f.textAlign === 'center') {
+            tx = f.x + f.maxWidth / 2;
+            offCtx.textAlign = 'center';
+          } else if (f.textAlign === 'right') {
+            tx = f.x + f.maxWidth;
+            offCtx.textAlign = 'right';
+          } else {
+            offCtx.textAlign = 'left';
+          }
+
+          offCtx.fillText(text, tx, f.y + (f.height || 40) / 2);
+          offCtx.restore();
+        });
+
+        currentFlatDataUrl = offCanvas.toDataURL('image/png');
+        portalFlatImage.src = currentFlatDataUrl;
+      }
+
+      // Admin Logic
+      function bindAdmin() {
+        populateFieldSelect();
+        renderAdminTable();
+
+        document.getElementById('adminModeMapper').addEventListener('click', () => {
+          adminMode = 'mapper';
+          document.getElementById('adminModeMapper').classList.add('action-btn-primary');
+          document.getElementById('adminModePreview').classList.remove('action-btn-primary');
+          renderAdminCanvas();
+        });
+
+        document.getElementById('adminModePreview').addEventListener('click', () => {
+          adminMode = 'preview';
+          document.getElementById('adminModePreview').classList.add('action-btn-primary');
+          document.getElementById('adminModeMapper').classList.remove('action-btn-primary');
+          renderAdminCanvas();
+        });
+
+        document.getElementById('adminFieldSelect').addEventListener('change', e => {
+          selectedField = e.target.value;
+          syncInspector();
+          renderAdminCanvas();
+        });
+
+        // Inspector inputs
+        const bindNum = (id, key) => {
+          document.getElementById(id).addEventListener('input', e => {
+            if (templateConfig.fields[selectedField]) {
+              templateConfig.fields[selectedField][key] = Number(e.target.value) || 0;
+              renderAdminCanvas();
+            }
+          });
+        };
+        bindNum('adminX', 'x');
+        bindNum('adminY', 'y');
+        bindNum('adminMaxWidth', 'maxWidth');
+        bindNum('adminHeight', 'height');
+        bindNum('adminFontSize', 'fontSize');
+
+        document.getElementById('adminFontFamily').addEventListener('change', e => {
+          templateConfig.fields[selectedField].fontFamily = e.target.value;
+          renderAdminCanvas();
+        });
+        document.getElementById('adminFontWeight').addEventListener('change', e => {
+          templateConfig.fields[selectedField].fontWeight = e.target.value;
+          renderAdminCanvas();
+        });
+        document.getElementById('adminColor').addEventListener('input', e => {
+          templateConfig.fields[selectedField].color = e.target.value;
+          renderAdminCanvas();
+        });
+        document.getElementById('adminTextAlign').addEventListener('change', e => {
+          templateConfig.fields[selectedField].textAlign = e.target.value;
+          renderAdminCanvas();
+        });
+        document.getElementById('adminTextTransform').addEventListener('change', e => {
+          templateConfig.fields[selectedField].textTransform = e.target.value;
+          renderAdminCanvas();
+        });
+
+        // Drag on canvas
+        let isDrag = false;
+        let startX = 0, startY = 0;
+        let origX = 0, origY = 0;
+
+        adminCanvas.addEventListener('mousedown', e => {
+          if (adminMode !== 'mapper') return;
+          const rect = adminCanvas.getBoundingClientRect();
+          const mx = (e.clientX - rect.left) / zoom;
+          const my = (e.clientY - rect.top) / zoom;
+
+          // Check click inside fields
+          for (const [k, f] of Object.entries(templateConfig.fields)) {
+            if (mx >= f.x && mx <= f.x + f.maxWidth && my >= f.y && my <= f.y + (f.height || 40)) {
+              selectedField = k;
+              document.getElementById('adminFieldSelect').value = k;
+              syncInspector();
+              isDrag = true;
+              startX = mx;
+              startY = my;
+              origX = f.x;
+              origY = f.y;
+              renderAdminCanvas();
+              return;
+            }
+          }
+        });
+
+        window.addEventListener('mousemove', e => {
+          if (!isDrag || adminMode !== 'mapper') return;
+          const rect = adminCanvas.getBoundingClientRect();
+          const mx = (e.clientX - rect.left) / zoom;
+          const my = (e.clientY - rect.top) / zoom;
+          const f = templateConfig.fields[selectedField];
+          f.x = Math.round(origX + (mx - startX));
+          f.y = Math.round(origY + (my - startY));
+          document.getElementById('adminX').value = f.x;
+          document.getElementById('adminY').value = f.y;
+          renderAdminCanvas();
+        });
+
+        window.addEventListener('mouseup', () => { isDrag = false; });
+
+        // Auto serial generator
+        document.getElementById('adminApplySerialBtn').addEventListener('click', () => {
+          const prefix = (document.getElementById('adminPrefix').value || '24CVSCB').trim();
+          const start = parseInt(document.getElementById('adminStartSerial').value, 10) || 1;
+          const pad = parseInt(document.getElementById('adminPadding').value, 10) || 3;
+          students.forEach((s, idx) => {
+            s.cert_no = `${prefix}${String(start + idx).padStart(pad, '0')}`;
+          });
+          renderAdminTable();
+          renderAdminCanvas();
+          alert(`Generated serials ${students[0].cert_no} to ${students[students.length-1].cert_no}`);
+        });
+
+        // Bulk Zip download
+        document.getElementById('adminBulkZipBtn').addEventListener('click', async () => {
+          if (!window.JSZip) { alert('JSZip loading...'); return; }
+          const zip = new JSZip();
+          const folder = zip.folder("Disha_Certificates");
+          const off = document.createElement('canvas');
+          off.width = templateConfig.naturalWidth;
+          off.height = templateConfig.naturalHeight;
+          const ctxOff = off.getContext('2d');
+
+          for (let i = 0; i < students.length; i++) {
+            const st = students[i];
+            ctxOff.drawImage(templateImg, 0, 0);
+            Object.keys(templateConfig.fields).forEach(k => {
+              const f = templateConfig.fields[k];
+              let val = st[k] || '';
+              let txt = f.placeholder ? f.placeholder.replace(`{${k}}`, val).replace('{cert_no}', st.cert_no) : val;
+              if (f.textTransform === 'uppercase') txt = txt.toUpperCase();
+              let fs = f.fontSize || 24;
+              ctxOff.save();
+              ctxOff.font = `${f.fontWeight || 400} ${fs}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+              while (ctxOff.measureText(txt).width > f.maxWidth && fs > 8) {
+                fs -= 1;
+                ctxOff.font = `${f.fontWeight || 400} ${fs}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+              }
+              ctxOff.fillStyle = f.color || '#000000';
+              ctxOff.textBaseline = 'middle';
+              let tx = f.textAlign === 'center' ? f.x + f.maxWidth / 2 : f.textAlign === 'right' ? f.x + f.maxWidth : f.x;
+              ctxOff.textAlign = f.textAlign || 'left';
+              ctxOff.fillText(txt, tx, f.y + (f.height || 40) / 2);
+              ctxOff.restore();
+            });
+            const blob = await new Promise(res => off.toBlob(res, 'image/png'));
+            folder.file(`${st.cert_no}_${st.name.replace(/\s+/g, '_')}.png`, blob);
+          }
+
+          const content = await zip.generateAsync({ type: 'blob' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(content);
+          a.download = `Disha_Certificates_Bulk.zip`;
+          a.click();
+        });
+
+        document.getElementById('adminSaveConfigBtn').addEventListener('click', () => {
+          alert('Template coordinates mapping saved to database successfully!');
+        });
+      }
+
+      function populateFieldSelect() {
+        const sel = document.getElementById('adminFieldSelect');
+        sel.innerHTML = '';
+        Object.keys(templateConfig.fields).forEach(k => {
+          const opt = document.createElement('option');
+          opt.value = k;
+          opt.textContent = `${templateConfig.fields[k].label} ({{${k}}})`;
+          sel.appendChild(opt);
+        });
+        syncInspector();
+      }
+
+      function syncInspector() {
+        const f = templateConfig.fields[selectedField];
+        if (!f) return;
+        document.getElementById('adminX').value = f.x;
+        document.getElementById('adminY').value = f.y;
+        document.getElementById('adminMaxWidth').value = f.maxWidth;
+        document.getElementById('adminHeight').value = f.height || 40;
+        document.getElementById('adminFontFamily').value = f.fontFamily || 'Roboto';
+        document.getElementById('adminFontSize').value = f.fontSize || 24;
+        document.getElementById('adminFontWeight').value = f.fontWeight || '400';
+        document.getElementById('adminColor').value = f.color || '#000000';
+        document.getElementById('adminTextAlign').value = f.textAlign || 'center';
+        document.getElementById('adminTextTransform').value = f.textTransform || 'none';
+      }
+
+      function renderAdminCanvas() {
+        if (!templateLoaded) return;
+        const dw = Math.round(templateConfig.naturalWidth * zoom);
+        const dh = Math.round(templateConfig.naturalHeight * zoom);
+        adminCanvas.width = dw;
+        adminCanvas.height = dh;
+        adminCtx.drawImage(templateImg, 0, 0, dw, dh);
+
+        if (adminMode === 'mapper') {
+          Object.keys(templateConfig.fields).forEach(k => {
+            const f = templateConfig.fields[k];
+            const isSel = k === selectedField;
+            const sx = f.x * zoom, sy = f.y * zoom, sw = f.maxWidth * zoom, sh = (f.height || 40) * zoom;
+            adminCtx.save();
+            adminCtx.fillStyle = isSel ? 'rgba(18, 67, 156, 0.15)' : 'rgba(100, 116, 139, 0.08)';
+            adminCtx.fillRect(sx, sy, sw, sh);
+            adminCtx.strokeStyle = isSel ? '#12439c' : 'rgba(100, 116, 139, 0.5)';
+            adminCtx.lineWidth = isSel ? 2 : 1;
+            adminCtx.strokeRect(sx, sy, sw, sh);
+
+            adminCtx.font = `${f.fontWeight || 400} ${Math.round((f.fontSize || 24) * zoom)}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+            adminCtx.fillStyle = f.color || '#000';
+            adminCtx.textBaseline = 'middle';
+            let tx = f.textAlign === 'center' ? sx + sw / 2 : f.textAlign === 'right' ? sx + sw : sx;
+            adminCtx.textAlign = f.textAlign || 'left';
+            adminCtx.fillText(f.placeholder || `{{${k}}}`, tx, sy + sh / 2);
+            adminCtx.restore();
+          });
+        } else {
+          // Preview student
+          const st = students[previewStudentIdx] || students[0];
+          Object.keys(templateConfig.fields).forEach(k => {
+            const f = templateConfig.fields[k];
+            let val = st[k] || '';
+            let txt = f.placeholder ? f.placeholder.replace(`{${k}}`, val).replace('{cert_no}', st.cert_no) : val;
+            let fs = Math.round((f.fontSize || 24) * zoom);
+            const sx = f.x * zoom, sy = f.y * zoom, sw = f.maxWidth * zoom, sh = (f.height || 40) * zoom;
+            adminCtx.save();
+            adminCtx.font = `${f.fontWeight || 400} ${fs}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+            while (adminCtx.measureText(txt).width > sw && fs > 6) {
+              fs -= 1;
+              adminCtx.font = `${f.fontWeight || 400} ${fs}px "${f.fontFamily || 'Roboto'}", sans-serif`;
+            }
+            adminCtx.fillStyle = f.color || '#000';
+            adminCtx.textBaseline = 'middle';
+            let tx = f.textAlign === 'center' ? sx + sw / 2 : f.textAlign === 'right' ? sx + sw : sx;
+            adminCtx.textAlign = f.textAlign || 'left';
+            adminCtx.fillText(txt, tx, sy + sh / 2);
+            adminCtx.restore();
+          });
+        }
+      }
+
+      function renderAdminTable() {
+        const tb = document.getElementById('adminTableBody');
+        tb.innerHTML = '';
+        students.forEach((s, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td><strong>${s.name}</strong></td>
+            <td><code style="background:#e8f0fe; color:#12439c; padding:2px 6px; border-radius:4px; font-weight:700;">${s.cert_no}</code></td>
+            <td>${s.branch}</td>
+            <td>${s.year}</td>
+            <td><button class="action-btn" style="padding:2px 8px; font-size:0.75rem;" onclick="window.previewIdx(${idx})">Preview</button></td>
+          `;
+          tb.appendChild(tr);
+        });
+        document.getElementById('adminStudentCount').textContent = `${students.length} Students`;
+      }
+
+      window.previewIdx = function(idx) {
+        previewStudentIdx = idx;
+        adminMode = 'preview';
+        document.getElementById('adminModePreview').classList.add('action-btn-primary');
+        document.getElementById('adminModeMapper').classList.remove('action-btn-primary');
+        renderAdminCanvas();
+      };
+
+      window.addEventListener('DOMContentLoaded', start);
+    })();
+  </script>
+</body>
+</html>

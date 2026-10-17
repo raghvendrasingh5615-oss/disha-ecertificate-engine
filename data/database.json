@@ -1,0 +1,238 @@
+{
+  "activeTemplateId": "tmpl-smart-conveyer-2024",
+  "templates": [
+    {
+      "id": "tmpl-smart-conveyer-2024",
+      "name": "Smart Conveyer Belt Workshop Certificate",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "imageUrl": "/template.png",
+      "naturalWidth": 1563,
+      "naturalHeight": 1105,
+      "createdAt": "2024-06-26T10:12:02.000Z",
+      "updatedAt": "2024-06-26T10:25:30.000Z",
+      "fields": {
+        "cert_no": {
+          "label": "Certificate Number",
+          "placeholder": "Cert. No. {cert_no}",
+          "csvColumn": "cert_no",
+          "x": 960,
+          "y": 78,
+          "maxWidth": 460,
+          "height": 35,
+          "fontSize": 22,
+          "fontFamily": "Roboto",
+          "fontWeight": "500",
+          "color": "#1e293b",
+          "textAlign": "right",
+          "textTransform": "none"
+        },
+        "name": {
+          "label": "Candidate Name",
+          "placeholder": "{name}",
+          "csvColumn": "name",
+          "x": 380,
+          "y": 545,
+          "maxWidth": 800,
+          "height": 75,
+          "fontSize": 62,
+          "fontFamily": "Roboto",
+          "fontWeight": "700",
+          "color": "#0f172a",
+          "textAlign": "center",
+          "textTransform": "uppercase"
+        },
+        "year": {
+          "label": "Class / Year",
+          "placeholder": "{year}",
+          "csvColumn": "year",
+          "x": 285,
+          "y": 672,
+          "maxWidth": 168,
+          "height": 38,
+          "fontSize": 26,
+          "fontFamily": "Roboto",
+          "fontWeight": "500",
+          "color": "#1e293b",
+          "textAlign": "center",
+          "textTransform": "none"
+        },
+        "branch": {
+          "label": "Branch / Institute",
+          "placeholder": "{branch}",
+          "csvColumn": "branch",
+          "x": 785,
+          "y": 672,
+          "maxWidth": 580,
+          "height": 38,
+          "fontSize": 26,
+          "fontFamily": "Roboto",
+          "fontWeight": "500",
+          "color": "#1e293b",
+          "textAlign": "center",
+          "textTransform": "capitalize"
+        },
+        "verification_url": {
+          "label": "Verification Notice",
+          "placeholder": "Verify online at https://disha.mbm.ac.in/ecertificates?cert={cert_no}",
+          "csvColumn": "",
+          "x": 380,
+          "y": 1025,
+          "maxWidth": 800,
+          "height": 25,
+          "fontSize": 15,
+          "fontFamily": "Roboto",
+          "fontWeight": "400",
+          "color": "#64748b",
+          "textAlign": "center",
+          "textTransform": "none",
+          "fontStyle": "italic"
+        }
+      }
+    }
+  ],
+  "students": [
+    {
+      "cert_no": "24CVSCB001",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Kuldeep Singh",
+      "branch": "Computer Science & Engineering",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB002",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Mohit Gaur",
+      "branch": "Information Technology",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB003",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Jinal Soni",
+      "branch": "Computer Science & Engineering",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB004",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Bhavesh Tak",
+      "branch": "Building & Construction Engineering",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB005",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Rohan Mangal",
+      "branch": "Information Technology",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB006",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Sanjay Jakhar",
+      "branch": "Mechanical Engineering",
+      "year": "II Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB007",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Jatin Saini",
+      "branch": "Electronics & Communication Engineering",
+      "year": "II Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB008",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Mridul Bansal",
+      "branch": "Information Technology",
+      "year": "II Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB009",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Nishtha Jain",
+      "branch": "Electronics & Computer Engineering",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB010",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Riya Shekhawat",
+      "branch": "Electronics & Electrical Engineering",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB011",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Yuvadhan Singh Rutia",
+      "branch": "Electrical Engineering",
+      "year": "II Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB012",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Ketan",
+      "branch": "Computer Science & Engineering",
+      "year": "II Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    },
+    {
+      "cert_no": "24CVSCB013",
+      "template_id": "tmpl-smart-conveyer-2024",
+      "name": "Mayank Aggarwal",
+      "branch": "Computer Science & Engineering",
+      "year": "I Year",
+      "event": "Computer Vision based Smart Conveyer Belt Workshop",
+      "date": "2024-06-26",
+      "certificate_type": "Participation",
+      "status": "published"
+    }
+  ]
+}

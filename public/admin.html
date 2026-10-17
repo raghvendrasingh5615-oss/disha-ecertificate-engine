@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Bulk Create & Template Mapper | DISHA CSE MBM</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <!-- Vendor Libraries -->
+  <script src="/js/jszip.min.js"></script>
+  <script src="/js/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="disha-header">
+    <div class="header-inner">
+      <a href="/admin" class="brand-wrapper">
+        <div class="brand-crest">D</div>
+        <div class="brand-info">
+          <span class="brand-title">D I S H A</span>
+          <span class="brand-sub">DEPT OF CSE, MBM UNIVERSITY • ADMIN STUDIO</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/ecertificates" class="nav-btn">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Student Portal
+        </a>
+        <a href="/admin" class="nav-btn active">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Template Mapper
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Main Studio Layout -->
+  <div class="admin-layout">
+    
+    <!-- Top Editor Toolbar -->
+    <div class="editor-toolbar">
+      <div class="toolbar-left">
+        <div class="template-badge">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <input type="text" id="templateNameInput" class="form-input" style="width:230px; font-weight:600;" placeholder="Template Name">
+        </div>
+
+        <input type="file" id="uploadTemplateInput" accept="image/*" style="display:none;">
+        <button class="toolbar-btn" onclick="document.getElementById('uploadTemplateInput').click();" title="Upload Blank Certificate Template">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          Upload Blank Template
+        </button>
+      </div>
+
+      <!-- Center View Mode Toggle -->
+      <div class="toolbar-center">
+        <div class="mode-toggle-group">
+          <button id="modeMapperBtn" class="mode-btn active">📐 Bounding Box Mapper</button>
+          <button id="modePreviewBtn" class="mode-btn">👁️ Live Student Preview</button>
+        </div>
+      </div>
+
+      <!-- Right Action Buttons -->
+      <div class="toolbar-right">
+        <button id="bulkZipBtn" class="toolbar-btn btn-accent" title="Render all certificates and download as ZIP">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Bulk Download ZIP (PNGs)
+        </button>
+
+        <button id="saveTemplateBtn" class="toolbar-btn btn-primary" title="Save coordinates and styles to database">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          </svg>
+          Save Coordinate Mapping
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Workspace -->
+    <div class="editor-workspace">
+      
+      <!-- Canvas Area -->
+      <div class="canvas-viewport">
+        <!-- Floating Canvas Info -->
+        <div class="canvas-info-bar">
+          <span id="imageDims">1563 × 1105 px</span>
+          <span id="mouseCoords">X: 0, Y: 0</span>
+          <span id="selectedFieldBadge" style="color:#60a5fa;">Selected: {{name}}</span>
+        </div>
+
+        <div id="canvasWrapper" class="canvas-wrapper">
+          <canvas id="editorCanvas"></canvas>
+        </div>
+
+        <!-- Floating Zoom Controls -->
+        <div class="zoom-bar">
+          <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out">−</button>
+          <span id="zoomText">65%</span>
+          <button id="zoomInBtn" class="zoom-btn" title="Zoom In">+</button>
+          <button id="zoomFitBtn" class="zoom-btn" style="font-size:0.75rem; width:auto; padding:0 6px;" title="Fit to Viewport">Fit</button>
+        </div>
+      </div>
+
+      <!-- Right Inspector Sidebar -->
+      <aside class="inspector-sidebar">
+        <div class="inspector-header">
+          <div class="inspector-title">
+            <span>Element Inspector</span>
+            <span class="badge-pill badge-primary">Native Pixels</span>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <select id="fieldSelect" class="form-select" style="width:100%; font-weight:600;"></select>
+          </div>
+          <div id="fieldChipsContainer" class="field-chips-container"></div>
+        </div>
+
+        <div class="inspector-body">
+          <!-- Bounding Box Coordinates -->
+          <div class="form-group">
+            <label class="form-label">
+              <span>Bounding Box Position & Size</span>
+              <span style="font-size:0.7rem; color:var(--gray-500);">(Native Img Coordinates)</span>
+            </label>
+            <div class="form-row">
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">X (px)</span>
+                <input type="number" id="propX" class="form-input">
+              </div>
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Y (px)</span>
+                <input type="number" id="propY" class="form-input">
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:0.4rem;">
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Max Width (px)</span>
+                <input type="number" id="propMaxWidth" class="form-input">
+              </div>
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Height (px)</span>
+                <input type="number" id="propHeight" class="form-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Typography -->
+          <div class="form-group">
+            <label class="form-label">Typography & Styling</label>
+            <div class="form-row">
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Font Family</span>
+                <select id="propFontFamily" class="form-select">
+                  <option value="Roboto">Roboto</option>
+                  <option value="Sanchez">Sanchez (Serif)</option>
+                  <option value="Outfit">Outfit</option>
+                  <option value="Inter">Inter</option>
+                  <option value="Montserrat">Montserrat</option>
+                  <option value="Playfair Display">Playfair Display</option>
+                  <option value="Arial">Arial</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Font Weight</span>
+                <select id="propFontWeight" class="form-select">
+                  <option value="300">300 Light</option>
+                  <option value="400">400 Regular</option>
+                  <option value="500">500 Medium</option>
+                  <option value="600">600 Semi-Bold</option>
+                  <option value="700">700 Bold</option>
+                  <option value="900">900 Black</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-top:0.4rem;">
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Font Size (px)</span>
+                <input type="number" id="propFontSize" class="form-input" min="8" max="140">
+              </div>
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Text Color</span>
+                <div class="color-input-wrapper">
+                  <input type="color" id="propColor" class="color-picker" value="#000000">
+                  <input type="text" id="propColorHex" class="form-input" style="flex:1;" value="#000000">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-top:0.4rem;">
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Text Align</span>
+                <select id="propTextAlign" class="form-select">
+                  <option value="center">Center</option>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Text Transform</span>
+                <select id="propTextTransform" class="form-select">
+                  <option value="none">Normal</option>
+                  <option value="uppercase">UPPERCASE</option>
+                  <option value="capitalize">Capitalize</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Template & Mapping -->
+          <div class="form-group">
+            <label class="form-label">Data Mapping</label>
+            <div class="form-group">
+              <span style="font-size:0.7rem; color:var(--gray-500);">Field Label</span>
+              <input type="text" id="propLabel" class="form-input">
+            </div>
+            <div class="form-group" style="margin-top:0.4rem;">
+              <span style="font-size:0.7rem; color:var(--gray-500);">CSV Column Name</span>
+              <input type="text" id="propCsvCol" class="form-input">
+            </div>
+            <div class="form-group" style="margin-top:0.4rem;">
+              <span style="font-size:0.7rem; color:var(--gray-500);">Placeholder Pattern</span>
+              <input type="text" id="propPlaceholder" class="form-input" placeholder="{field_name}">
+            </div>
+          </div>
+
+          <!-- Custom Column Management -->
+          <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+            <button id="addCustomColBtn" class="toolbar-btn" style="flex:1;">
+              + Add Custom Field
+            </button>
+            <button id="deleteFieldBtn" class="toolbar-btn" style="color:var(--danger); border-color:var(--danger-light);">
+              Delete
+            </button>
+          </div>
+
+          <div style="background:var(--gray-100); padding:0.75rem; border-radius:var(--radius-sm); font-size:0.75rem; color:var(--gray-600); line-height:1.4;">
+            💡 <strong>Auto-Shrink Feature</strong>: When rendering students, any text that exceeds <code>maxWidth</code> will automatically shrink its <code>fontSize</code> until it fits perfectly.
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom CSV & Auto Serial Generator Drawer -->
+    <div id="csvDrawer" class="bottom-drawer expanded">
+      <div id="drawerToggleBtn" class="drawer-header">
+        <div class="drawer-title">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          CSV Student Records & Auto Certificate Number Generator
+          <span id="totalRowsCount" class="badge-pill badge-success">13 Students</span>
+        </div>
+        <div style="font-size:0.8rem; color:var(--primary); font-weight:600;">
+          Toggle Drawer ⬍
+        </div>
+      </div>
+
+      <div class="drawer-body">
+        <!-- Generator Controls -->
+        <div class="generator-controls">
+          <div style="display:flex; gap:0.5rem;">
+            <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+            <button class="toolbar-btn" onclick="document.getElementById('csvFileInput').click();" style="flex:1;">
+              Upload CSV
+            </button>
+            <button id="loadSampleCsvBtn" class="toolbar-btn btn-primary" style="flex:1;" title="Load authentic 13 students with 24CVSCB013">
+              Load Sample CSV
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="font-size:0.8rem; font-weight:700; color:var(--gray-800);">
+              Auto Certificate Number Generator
+            </label>
+            <div style="font-size:0.75rem; color:var(--gray-500); margin-bottom:0.25rem;">
+              Format: <code>{Prefix}{PaddedSerial}</code> (e.g. 24CVSCB001 to 24CVSCB013)
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Prefix Code</span>
+                <input type="text" id="certPrefix" class="form-input" value="24CVSCB">
+              </div>
+              <div class="form-group">
+                <span style="font-size:0.7rem; color:var(--gray-500);">Starting Serial</span>
+                <input type="number" id="certStart" class="form-input" value="1" min="1">
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:0.4rem;">
+              <span style="font-size:0.7rem; color:var(--gray-500);">Zero-Padding Digits</span>
+              <input type="number" id="certPadding" class="form-input" value="3" min="1" max="6">
+            </div>
+            <button id="applyGeneratorBtn" class="toolbar-btn btn-accent" style="margin-top:0.5rem; justify-content:center;">
+              Apply Auto-Generated Numbers
+            </button>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; margin-top:auto;">
+            <button id="saveDbBtn" class="toolbar-btn btn-success" style="flex:1; justify-content:center;">
+              Save to Database
+            </button>
+          </div>
+        </div>
+
+        <!-- Student Records Table Preview -->
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:40px;">#</th>
+                <th>Candidate Name</th>
+                <th>Cert Number</th>
+                <th>Branch / Institute</th>
+                <th>Class / Year</th>
+                <th>Event</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="csvTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Name Hidden input for state sync -->
+  <input type="hidden" id="eventNameInput" value="Computer Vision based Smart Conveyer Belt Workshop">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Progress Modal for ZIP Generation -->
+  <div id="progressModal" class="progress-modal" style="display:none;">
+    <div class="progress-card">
+      <h3 style="font-family:var(--font-heading); color:var(--gray-900);">Generating Certificates</h3>
+      <div class="progress-bar-bg">
+        <div id="progressBar" class="progress-bar-fill"></div>
+      </div>
+      <p id="progressText" style="font-size:0.875rem; color:var(--gray-600);">Rendering high-res bitmaps...</p>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
