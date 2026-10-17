@@ -659,12 +659,78 @@
     // Upload Blank Template Image
     document.getElementById('uploadTemplateInput').addEventListener('change', uploadBlankTemplate);
 
+    // Maximize Canvas Listeners (Toolbar & Canvas Top-Right)
+    const toolbarMaxBtn = document.getElementById('toolbarMaximizeBtn');
+    const canvasMaxBtn = document.getElementById('maximizeCanvasBtn');
+    const floatingInspBtn = document.getElementById('floatingInspectorBtn');
+
+    if (toolbarMaxBtn) toolbarMaxBtn.addEventListener('click', toggleMaximizeMapper);
+    if (canvasMaxBtn) canvasMaxBtn.addEventListener('click', toggleMaximizeMapper);
+    if (floatingInspBtn) floatingInspBtn.addEventListener('click', toggleFloatingInspector);
+
     // Inspector Inputs change listeners
     bindInspectorInputs();
 
     // CSV & Auto Serial Generator listeners
     bindCsvGenerator();
   }
+
+  // Maximize Bounding Box Mapper Toggle
+  let isMaximized = false;
+  let showFloatingInspector = false;
+
+  function toggleMaximizeMapper() {
+    isMaximized = !isMaximized;
+    const adminLayout = document.querySelector('.admin-layout');
+    const toolbarMaxBtn = document.getElementById('toolbarMaximizeBtn');
+    const toolbarMaxText = document.getElementById('toolbarMaxText');
+    const canvasMaxBtn = document.getElementById('maximizeCanvasBtn');
+    const canvasMaxText = document.getElementById('canvasMaxText');
+    const drawer = document.getElementById('csvDrawer');
+
+    if (isMaximized) {
+      adminLayout.classList.add('maximized-mode');
+      if (toolbarMaxBtn) toolbarMaxBtn.classList.add('btn-accent');
+      if (toolbarMaxText) toolbarMaxText.textContent = 'Restore';
+      if (canvasMaxBtn) canvasMaxBtn.classList.add('active');
+      if (canvasMaxText) canvasMaxText.textContent = 'Restore View';
+      if (drawer) {
+        drawer.classList.remove('expanded');
+        drawer.classList.add('collapsed');
+      }
+    } else {
+      adminLayout.classList.remove('maximized-mode');
+      adminLayout.classList.remove('show-floating-inspector');
+      showFloatingInspector = false;
+      if (toolbarMaxBtn) toolbarMaxBtn.classList.remove('btn-accent');
+      if (toolbarMaxText) toolbarMaxText.textContent = 'Maximize';
+      if (canvasMaxBtn) canvasMaxBtn.classList.remove('active');
+      if (canvasMaxText) canvasMaxText.textContent = 'Maximize Mapper';
+    }
+
+    setTimeout(() => {
+      fitCanvasToViewport();
+    }, 120);
+  }
+
+  function toggleFloatingInspector() {
+    showFloatingInspector = !showFloatingInspector;
+    const adminLayout = document.querySelector('.admin-layout');
+    const floatingBtn = document.getElementById('floatingInspectorBtn');
+    if (showFloatingInspector) {
+      adminLayout.classList.add('show-floating-inspector');
+      if (floatingBtn) floatingBtn.classList.add('active');
+    } else {
+      adminLayout.classList.remove('show-floating-inspector');
+      if (floatingBtn) floatingBtn.classList.remove('active');
+    }
+  }
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isMaximized) {
+      toggleMaximizeMapper();
+    }
+  });
 
   // Select field and sync with inspector
   function selectField(key) {

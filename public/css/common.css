@@ -2,13 +2,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Sanchez:ital@0;1&display=swap');
 
 :root {
-  --primary: #12439c;
-  --primary-hover: #0d347c;
-  --primary-light: #e8f0fe;
-  --primary-glow: rgba(18, 67, 156, 0.25);
-  --accent: #f59e0b;
-  --accent-hover: #d97706;
-  --accent-light: #fef3c7;
+  --disha-blue: #1b4f91;
+  --disha-blue-hover: #153e73;
+  --disha-red: #a81d33;
+  --disha-red-hover: #861628;
+  --disha-red-light: #fdf2f4;
+  
+  --primary: #1b4f91;
+  --primary-hover: #153e73;
+  --primary-light: #ebf3fb;
+  --primary-glow: rgba(27, 79, 145, 0.25);
+  --accent: #a81d33;
+  --accent-hover: #861628;
+  --accent-light: #fdf2f4;
   --success: #10b981;
   --success-dark: #059669;
   --success-light: #ecfdf5;
@@ -25,8 +31,8 @@
   --gray-800: #1e293b;
   --gray-900: #0f172a;
   
-  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Roboto', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
   --radius-sm: 6px;
@@ -34,7 +40,7 @@
   --radius-lg: 16px;
   --radius-full: 9999px;
   
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
@@ -60,66 +66,104 @@ body {
   flex-direction: column;
 }
 
-/* Header & Nav */
+/* Header & Nav - Matching official disha.mbm.ac.in */
 .disha-header {
   background: #ffffff;
   border-bottom: 1px solid var(--gray-200);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .header-inner {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
 }
 
 .brand-wrapper {
   display: flex;
   align-items: center;
-  gap: 1rem;
   text-decoration: none;
+  transition: transform 0.2s ease;
 }
 
-.brand-crest {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, #12439c, #1e3a8a);
-  color: white;
-  border-radius: var(--radius-md);
+.brand-wrapper:hover {
+  opacity: 0.95;
+}
+
+.disha-official-logo {
+  height: 48px;
+  max-height: 52px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.disha-nav-links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 1.25rem;
-  box-shadow: 0 4px 10px rgba(18, 67, 156, 0.3);
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
-.brand-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-title {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--primary);
-  line-height: 1.1;
-}
-
-.brand-sub {
-  font-size: 0.75rem;
-  color: var(--gray-500);
-  font-weight: 500;
+.disha-nav-item {
+  text-decoration: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
   letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--disha-red);
+  padding: 0.4rem 0.2rem;
+  position: relative;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.disha-nav-item:hover {
+  color: var(--disha-red-hover);
+}
+
+.disha-nav-item.active {
+  color: var(--disha-red);
+}
+
+.disha-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: var(--disha-red);
+  border-radius: 2px;
+}
+
+.disha-nav-admin-pill {
+  background: var(--disha-blue);
+  color: white !important;
+  padding: 0.4rem 0.85rem !important;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.825rem;
+  box-shadow: 0 1px 3px rgba(27, 79, 145, 0.25);
+}
+
+.disha-nav-admin-pill:hover {
+  background: var(--disha-blue-hover) !important;
+  transform: translateY(-1px);
+}
+
+.disha-nav-admin-pill::after {
+  display: none !important;
 }
 
 .nav-links {
@@ -144,7 +188,7 @@ body {
 .nav-btn.active {
   background-color: var(--primary-light);
   color: var(--primary);
-  border-color: rgba(18, 67, 156, 0.2);
+  border-color: rgba(27, 79, 145, 0.2);
 }
 
 .nav-btn:not(.active) {

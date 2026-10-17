@@ -217,6 +217,134 @@
   z-index: 10;
 }
 
+/* Canvas Top Right Floating Action Bar */
+.canvas-top-right-bar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 20;
+}
+
+.maximize-canvas-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+.maximize-canvas-btn:hover {
+  background: var(--primary);
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.maximize-canvas-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+}
+
+.floating-inspector-btn {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+.floating-inspector-btn:hover {
+  background: var(--gray-700);
+}
+
+.floating-inspector-btn.active {
+  background: var(--primary);
+  border-color: var(--primary-light);
+}
+
+/* ========================================================
+   MAXIMIZED WORKSPACE MODE
+   ======================================================== */
+.admin-layout.maximized-mode {
+  height: 100vh !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  background: #181c24 !important;
+}
+
+.admin-layout.maximized-mode .disha-header {
+  display: none !important;
+}
+
+.admin-layout.maximized-mode .bottom-drawer {
+  display: none !important;
+}
+
+.admin-layout.maximized-mode .mobile-view-tabs {
+  display: none !important;
+}
+
+.admin-layout.maximized-mode .editor-workspace {
+  height: calc(100vh - 56px) !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+}
+
+.admin-layout.maximized-mode .canvas-viewport {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 1.5rem !important;
+}
+
+.admin-layout.maximized-mode .inspector-sidebar {
+  display: none !important;
+}
+
+.admin-layout.maximized-mode .floating-inspector-btn {
+  display: inline-flex !important;
+}
+
+/* Slide-over floating inspector in maximized mode */
+.admin-layout.maximized-mode.show-floating-inspector .inspector-sidebar {
+  display: flex !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: 56px !important;
+  bottom: 0 !important;
+  width: 360px !important;
+  z-index: 60 !important;
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.6) !important;
+  animation: slideOver 0.2s ease-out;
+}
+
+@keyframes slideOver {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
 /* Right Inspector Sidebar */
 .inspector-sidebar {
   width: 360px;

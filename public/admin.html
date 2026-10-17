@@ -12,30 +12,28 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header matching official disha.mbm.ac.in -->
   <header class="disha-header">
     <div class="header-inner">
-      <a href="/admin" class="brand-wrapper">
-        <div class="brand-crest">D</div>
-        <div class="brand-info">
-          <span class="brand-title">D I S H A</span>
-          <span class="brand-sub">DEPT OF CSE, MBM UNIVERSITY • ADMIN STUDIO</span>
-        </div>
+      <a href="/admin" class="brand-wrapper" title="DISHA Admin Studio - Dept of CSE, MBM University">
+        <img src="/disha-logo.png" alt="DISHA - Dept of CSE, MBM University, Jodhpur" class="disha-official-logo">
       </a>
-      <div class="nav-links">
-        <a href="/ecertificates" class="nav-btn">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <nav class="disha-nav-links">
+        <a href="https://disha.mbm.ac.in/" class="disha-nav-item" target="_blank" rel="noopener">Home</a>
+        <a href="https://disha.mbm.ac.in/library" class="disha-nav-item" target="_blank" rel="noopener">Library</a>
+        <a href="/ecertificates" class="disha-nav-item">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align:text-bottom; margin-right:2px;">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Student Portal
         </a>
-        <a href="/admin" class="nav-btn active">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <a href="/admin" class="disha-nav-item active disha-nav-admin-pill" title="Current: Canva-Style Bounding Box Mapper">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
           Template Mapper
         </a>
-      </div>
+      </nav>
     </div>
   </header>
 
@@ -84,6 +82,14 @@
           </svg>
           Save Coordinate Mapping
         </button>
+
+        <!-- Right Top Corner Maximize Button in Toolbar -->
+        <button id="toolbarMaximizeBtn" class="toolbar-btn" style="background:var(--gray-900); color:white; border-color:var(--gray-700);" title="Maximize Bounding Box Mapper (Expand canvas to full view)">
+          <svg id="toolbarMaxIcon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <span id="toolbarMaxText">Maximize</span>
+        </button>
       </div>
     </div>
 
@@ -98,11 +104,28 @@
       
       <!-- Canvas Area -->
       <div class="canvas-viewport">
-        <!-- Floating Canvas Info -->
+        <!-- Floating Canvas Info (Top Left) -->
         <div class="canvas-info-bar">
           <span id="imageDims">1563 × 1105 px</span>
           <span id="mouseCoords">X: 0, Y: 0</span>
           <span id="selectedFieldBadge" style="color:#60a5fa;">Selected: {{name}}</span>
+        </div>
+
+        <!-- Floating Actions (Top Right of Canvas Viewport) -->
+        <div class="canvas-top-right-bar">
+          <button type="button" id="floatingInspectorBtn" class="floating-inspector-btn" title="Toggle Element Inspector properties">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span>Inspector</span>
+          </button>
+          
+          <button type="button" id="maximizeCanvasBtn" class="maximize-canvas-btn" title="Maximize Bounding Box Mapper (Hide panels for maximum editing space)">
+            <svg id="canvasMaxIcon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+            <span id="canvasMaxText">Maximize Mapper</span>
+          </button>
         </div>
 
         <div id="canvasWrapper" class="canvas-wrapper">
@@ -259,7 +282,7 @@
     </div>
 
     <!-- Bottom CSV & Auto Serial Generator Drawer -->
-    <div id="csvDrawer" class="bottom-drawer expanded">
+    <div id="csvDrawer" class="bottom-drawer collapsed">
       <div id="drawerToggleBtn" class="drawer-header">
         <div class="drawer-title">
           <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
