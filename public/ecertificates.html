@@ -90,14 +90,25 @@
     
     <!-- Error State Display -->
     <div id="errorContainer" class="error-card" style="display: none;">
-      <div class="error-icon-circle">✕</div>
-      <h3 class="error-title">Certificate Not Found</h3>
+      <div class="error-icon-circle" id="errorIcon">✕</div>
+      <h3 class="error-title" id="errorTitle">Certificate Not Found</h3>
       <p id="errorMessage" class="error-desc">
         No certificate matching this number was found in our official registry. Please check the serial code and try again.
       </p>
-      <button onclick="document.getElementById('certNumberInput').focus();" class="action-btn action-btn-primary">
-        Try Another Number
-      </button>
+      <div class="error-actions" style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.25rem;">
+        <button type="button" id="retryVerifyBtn" class="action-btn action-btn-accent" style="display: none;">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Retry Verification
+        </button>
+        <button type="button" id="errorTryDemoBtn" class="action-btn action-btn-primary">
+          Verify 24CVSCB013 (Mayank Aggarwal)
+        </button>
+        <button type="button" onclick="document.getElementById('certNumberInput').focus();" class="action-btn">
+          Search Different Number
+        </button>
+      </div>
     </div>
 
     <!-- Verified Result Card -->

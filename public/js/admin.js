@@ -60,10 +60,47 @@
 
   // Initialize
   async function init() {
-    await document.fonts.ready;
+    try {
+      const fontPromise = document.fonts ? document.fonts.ready : Promise.resolve();
+      await Promise.race([fontPromise, new Promise(r => setTimeout(r, 800))]);
+    } catch (e) {}
+
     bindEvents();
+    bindMobileTabs();
     await loadActiveTemplate();
     await loadInitialStudents();
+
+    // Auto re-fit on window resize / orientation change
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        fitCanvasToViewport();
+      }, 100);
+    });
+  }
+
+  // Mobile Tabs for phone viewports (< 900px)
+  function bindMobileTabs() {
+    const tabCanvas = document.getElementById('mobileTabCanvasBtn');
+    const tabInspector = document.getElementById('mobileTabInspectorBtn');
+    const workspace = document.getElementById('editorWorkspace');
+    if (!tabCanvas || !tabInspector || !workspace) return;
+
+    tabCanvas.addEventListener('click', () => {
+      tabCanvas.classList.add('active');
+      tabInspector.classList.remove('active');
+      workspace.classList.add('show-canvas');
+      workspace.classList.remove('show-inspector');
+      setTimeout(fitCanvasToViewport, 50);
+    });
+
+    tabInspector.addEventListener('click', () => {
+      tabInspector.classList.add('active');
+      tabCanvas.classList.remove('active');
+      workspace.classList.add('show-inspector');
+      workspace.classList.remove('show-canvas');
+    });
   }
 
   // Load Active Template from backend (with static CDN fallback for Netlify)
@@ -160,12 +197,18 @@
   function fitCanvasToViewport() {
     if (!imageLoaded) return;
     const viewport = document.querySelector('.canvas-viewport');
-    const availableWidth = viewport.clientWidth - 80;
-    const availableHeight = viewport.clientHeight - 80;
+    if (!viewport) return;
+
+    const isMobile = window.innerWidth <= 900;
+    const padX = isMobile ? 24 : 80;
+    const padY = isMobile ? 24 : 80;
+
+    const availableWidth = Math.max(260, (viewport.clientWidth || window.innerWidth) - padX);
+    const availableHeight = Math.max(200, (viewport.clientHeight || window.innerHeight * 0.55) - padY);
 
     const scaleX = availableWidth / templateImage.naturalWidth;
     const scaleY = availableHeight / templateImage.naturalHeight;
-    zoomLevel = Math.min(scaleX, scaleY, 0.85);
+    zoomLevel = Math.max(0.18, Math.min(scaleX, scaleY, 0.85));
     updateCanvasScale();
   }
 
@@ -592,6 +635,10 @@
       editorMode = 'mapper';
       document.getElementById('modeMapperBtn').classList.add('active');
       document.getElementById('modePreviewBtn').classList.remove('active');
+      if (window.innerWidth <= 900) {
+        const tabCanvas = document.getElementById('mobileTabCanvasBtn');
+        if (tabCanvas) tabCanvas.click();
+      }
       renderCanvas();
     });
 
@@ -599,6 +646,10 @@
       editorMode = 'preview';
       document.getElementById('modePreviewBtn').classList.add('active');
       document.getElementById('modeMapperBtn').classList.remove('active');
+      if (window.innerWidth <= 900) {
+        const tabCanvas = document.getElementById('mobileTabCanvasBtn');
+        if (tabCanvas) tabCanvas.click();
+      }
       renderCanvas();
     });
 
@@ -857,7 +908,7 @@
         const res = await fetch('/sample_students.csv');
         const text = await res.text();
         parseCsvText(text);
-        showToast('Loaded sample_students.csv (15 records)', 'success');
+        showToast(`Loaded sample_students.csv (${studentsData.length} records)`, 'success');
       } catch (err) {
         showToast('Error loading sample CSV: ' + err.message, 'error');
       }

@@ -487,3 +487,140 @@
   width: 0%;
   transition: width 0.15s ease;
 }
+
+/* ========================================================
+   Responsive Mobile Admin Layout (< 900px)
+   ======================================================== */
+.mobile-view-tabs {
+  display: none;
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  padding: 0.5rem 0.75rem;
+  gap: 0.5rem;
+  z-index: 18;
+}
+
+.mobile-tab-btn {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.825rem;
+  font-weight: 600;
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.mobile-tab-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 1px 3px rgba(30, 58, 138, 0.2);
+}
+
+@media (max-width: 900px) {
+  .admin-layout {
+    height: auto;
+    min-height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+
+  .editor-toolbar {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 0.65rem;
+  }
+
+  .toolbar-left, .toolbar-center, .toolbar-right {
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.4rem;
+  }
+
+  .template-badge {
+    width: 100%;
+  }
+
+  .template-badge #templateNameInput {
+    flex: 1;
+    width: 100% !important;
+  }
+
+  .toolbar-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .mode-toggle-group {
+    width: 100%;
+    display: flex;
+  }
+
+  .mode-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .mobile-view-tabs {
+    display: flex;
+  }
+
+  .editor-workspace {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .canvas-viewport {
+    min-height: 50vh;
+    padding: 0.75rem;
+    overflow: auto;
+  }
+
+  .inspector-sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--gray-200);
+    overflow: visible;
+  }
+
+  /* When mobile tabs toggle between canvas and inspector */
+  .editor-workspace.show-canvas .inspector-sidebar {
+    display: none !important;
+  }
+
+  .editor-workspace.show-canvas .canvas-viewport {
+    display: flex !important;
+    width: 100%;
+  }
+
+  .editor-workspace.show-inspector .canvas-viewport {
+    display: none !important;
+  }
+
+  .editor-workspace.show-inspector .inspector-sidebar {
+    display: flex !important;
+    width: 100%;
+  }
+
+  .canvas-info-bar {
+    top: 0.4rem;
+    left: 0.4rem;
+    font-size: 0.68rem;
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .zoom-bar {
+    bottom: 0.4rem;
+    left: 0.4rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .csv-drawer {
+    max-height: 85vh;
+  }
+}

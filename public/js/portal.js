@@ -1,7 +1,111 @@
-// Disha Student Verification Portal Engine
+// Disha Student Verification Portal Engine - Resilient v2.1
 
 (function() {
   'use strict';
+
+  // Authoritative in-memory fallback registry for the 13 workshop certificates
+  const FALLBACK_REGISTRY = {
+    template: {
+      id: "tmpl-smart-conveyer-2024",
+      name: "Smart Conveyer Belt Workshop Certificate",
+      event: "Computer Vision based Smart Conveyer Belt Workshop",
+      imageUrl: "/template.png",
+      naturalWidth: 1563,
+      naturalHeight: 1105,
+      fields: {
+        cert_no: {
+          label: "Certificate Number",
+          placeholder: "Cert. No. {cert_no}",
+          csvColumn: "cert_no",
+          x: 960,
+          y: 78,
+          maxWidth: 460,
+          height: 35,
+          fontSize: 22,
+          fontFamily: "Roboto",
+          fontWeight: "500",
+          color: "#1e293b",
+          textAlign: "right",
+          textTransform: "none"
+        },
+        name: {
+          label: "Candidate Name",
+          placeholder: "{name}",
+          csvColumn: "name",
+          x: 380,
+          y: 545,
+          maxWidth: 800,
+          height: 75,
+          fontSize: 62,
+          fontFamily: "Roboto",
+          fontWeight: "700",
+          color: "#0f172a",
+          textAlign: "center",
+          textTransform: "uppercase"
+        },
+        year: {
+          label: "Class / Year",
+          placeholder: "{year}",
+          csvColumn: "year",
+          x: 285,
+          y: 672,
+          maxWidth: 168,
+          height: 38,
+          fontSize: 26,
+          fontFamily: "Roboto",
+          fontWeight: "500",
+          color: "#1e293b",
+          textAlign: "center",
+          textTransform: "none"
+        },
+        branch: {
+          label: "Branch / Institute",
+          placeholder: "{branch}",
+          csvColumn: "branch",
+          x: 785,
+          y: 672,
+          maxWidth: 580,
+          height: 38,
+          fontSize: 26,
+          fontFamily: "Roboto",
+          fontWeight: "500",
+          color: "#1e293b",
+          textAlign: "center",
+          textTransform: "none"
+        },
+        verification_url: {
+          label: "Online Verification URL",
+          placeholder: "Verify online at https://disha.mbm.ac.in/ecertificates?cert={cert_no}",
+          csvColumn: "verification_url",
+          x: 380,
+          y: 1025,
+          maxWidth: 800,
+          height: 25,
+          fontSize: 16,
+          fontFamily: "Roboto",
+          fontWeight: "400",
+          color: "#64748b",
+          textAlign: "center",
+          textTransform: "none"
+        }
+      }
+    },
+    students: [
+      { cert_no: "24CVSCB001", name: "Kuldeep Singh", branch: "Computer Science & Engineering", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB002", name: "Mohit Gaur", branch: "Information Technology", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB003", name: "Jinal Soni", branch: "Computer Science & Engineering", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB004", name: "Bhavesh Tak", branch: "Building & Construction Engineering", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB005", name: "Rohan Mangal", branch: "Information Technology", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB006", name: "Sanjay Jakhar", branch: "Mechanical Engineering", year: "II Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB007", name: "Jatin Saini", branch: "Electronics & Communication Engineering", year: "II Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB008", name: "Mridul Bansal", branch: "Information Technology", year: "II Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB009", name: "Nishtha Jain", branch: "Electronics & Computer Engineering", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB010", name: "Riya Shekhawat", branch: "Electronics & Electrical Engineering", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB011", name: "Yuvadhan Singh Rutia", branch: "Electrical Engineering", year: "II Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB012", name: "Ketan", branch: "Computer Science & Engineering", year: "II Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" },
+      { cert_no: "24CVSCB013", name: "Mayank Aggarwal", branch: "Computer Science & Engineering", year: "I Year", event: "Computer Vision based Smart Conveyer Belt Workshop", date: "2024-06-26", certificate_type: "Participation" }
+    ]
+  };
 
   // DOM Elements
   const certForm = document.getElementById('certVerificationForm');
@@ -9,7 +113,10 @@
   const quickTestPill = document.getElementById('quickTestPill');
   const resultContainer = document.getElementById('resultContainer');
   const errorContainer = document.getElementById('errorContainer');
+  const errorTitle = document.getElementById('errorTitle');
   const errorMessage = document.getElementById('errorMessage');
+  const retryVerifyBtn = document.getElementById('retryVerifyBtn');
+  const errorTryDemoBtn = document.getElementById('errorTryDemoBtn');
   const flatCertImage = document.getElementById('flatCertImage');
 
   // Student info elements
@@ -33,6 +140,7 @@
   let currentStudent = null;
   let currentTemplate = null;
   let currentPngDataUrl = null;
+  let lastSearchedCertNo = '';
 
   async function init() {
     bindEvents();
@@ -54,7 +162,7 @@
       e.preventDefault();
       const certNo = certInput.value.trim().toUpperCase();
       if (!certNo) {
-        showError('Please enter a certificate number to verify.');
+        showError('Missing Certificate Number', 'Please enter a certificate number to verify.', false);
         return;
       }
       await verifyCertificate(certNo);
@@ -65,36 +173,74 @@
       await verifyCertificate('24CVSCB013');
     });
 
+    if (errorTryDemoBtn) {
+      errorTryDemoBtn.addEventListener('click', async () => {
+        certInput.value = '24CVSCB013';
+        await verifyCertificate('24CVSCB013');
+      });
+    }
+
+    if (retryVerifyBtn) {
+      retryVerifyBtn.addEventListener('click', async () => {
+        const certToRetry = lastSearchedCertNo || certInput.value.trim().toUpperCase() || '24CVSCB013';
+        certInput.value = certToRetry;
+        await verifyCertificate(certToRetry);
+      });
+    }
+
     downloadPngBtn.addEventListener('click', downloadHighResPng);
     downloadPdfBtn.addEventListener('click', downloadPrintReadyPdf);
     printCertBtn.addEventListener('click', () => window.print());
     copyLinkBtn.addEventListener('click', copyVerificationLink);
   }
 
+  // Fetch with strict timeout helper
+  async function fetchWithTimeout(url, timeoutMs = 4000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      return response;
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
+    }
+  }
+
   // Verify Certificate by Number
   async function verifyCertificate(certNo) {
-    try {
-      showLoading(true);
-      errorContainer.style.display = 'none';
-      resultContainer.style.display = 'none';
+    const cleanCertNo = (certNo || '').trim().toUpperCase();
+    lastSearchedCertNo = cleanCertNo;
 
+    if (!cleanCertNo) {
+      showError('Empty Input', 'Please enter a certificate number before searching.', false);
+      return;
+    }
+
+    showLoading(true);
+    errorContainer.style.display = 'none';
+    resultContainer.style.display = 'none';
+
+    try {
       let data = null;
+
+      // 1. Try Backend API
       try {
-        const res = await fetch(`/api/certificates/${encodeURIComponent(certNo)}`);
+        const res = await fetchWithTimeout(`/api/certificates/${encodeURIComponent(cleanCertNo)}`, 3500);
         if (res.ok) {
           data = await res.json();
         }
       } catch (e) {
-        console.warn('API route unavailable, trying static fallback...');
+        console.warn('Backend API endpoint unavailable or timed out, trying static database...', e);
       }
 
-      // Static hosting fallback (for pure static Netlify deployments)
+      // 2. Try Static CDN database.json (for Netlify / static hosting)
       if (!data || !data.found) {
         try {
-          const staticRes = await fetch('/data/database.json');
+          const staticRes = await fetchWithTimeout('/data/database.json', 3500);
           if (staticRes.ok) {
             const staticDb = await staticRes.json();
-            const cleanCertNo = certNo.trim().toUpperCase();
             const student = staticDb.students.find(s => s.cert_no && s.cert_no.trim().toUpperCase() === cleanCertNo);
             if (student) {
               const template = staticDb.templates.find(t => t.id === student.template_id) || staticDb.templates[0];
@@ -102,27 +248,45 @@
             }
           }
         } catch (e) {
-          console.error('Static fallback failed:', e);
+          console.warn('Static database.json fetch failed, falling back to embedded registry...', e);
         }
       }
 
+      // 3. Fall back to embedded offline registry
       if (!data || !data.found) {
-        showError(`No certificate record found for "${certNo}". Please check the certificate number and try again.`);
+        const fallbackStudent = FALLBACK_REGISTRY.students.find(s => s.cert_no === cleanCertNo);
+        if (fallbackStudent) {
+          data = {
+            found: true,
+            student: fallbackStudent,
+            template: FALLBACK_REGISTRY.template
+          };
+        }
+      }
+
+      // If still not found, show user-friendly not found error with retry option
+      if (!data || !data.found) {
+        showError(
+          'Certificate Not Found',
+          `No official record was found matching certificate number "${cleanCertNo}". Please verify the serial number or try the trial certificate below.`,
+          true,
+          cleanCertNo
+        );
         return;
       }
 
       currentStudent = data.student;
-      currentTemplate = data.template;
+      currentTemplate = data.template || FALLBACK_REGISTRY.template;
 
-      // Populate textual metadata
+      // Populate textual metadata in verified result card
       studentNameEl.textContent = currentStudent.name || 'Candidate';
-      certNumberDisplayEl.textContent = currentStudent.cert_no || certNo;
+      certNumberDisplayEl.textContent = currentStudent.cert_no || cleanCertNo;
       eventTitleEl.textContent = currentStudent.event || currentTemplate.event || 'College Workshop / Event';
       branchNameEl.textContent = `${currentStudent.branch || 'CSE'} ${currentStudent.year ? `(${currentStudent.year})` : ''}`;
       issueDateEl.textContent = currentStudent.date || 'N/A';
       certTypeEl.textContent = currentStudent.certificate_type || 'Participation';
 
-      // Flatten certificate onto canvas and display as single <img>
+      // Flatten certificate onto canvas and display as single flat <img>
       await renderFlatCertificate();
 
       resultContainer.style.display = 'block';
@@ -131,48 +295,100 @@
       window.scrollTo({ top: Math.max(0, yPos), behavior: 'smooth' });
 
       // Update URL without full refresh for easy sharing
-      const newUrl = `${window.location.pathname}?cert=${encodeURIComponent(certNo)}`;
-      window.history.replaceState({ cert: certNo }, '', newUrl);
+      const newUrl = `${window.location.pathname}?cert=${encodeURIComponent(cleanCertNo)}`;
+      window.history.replaceState({ cert: cleanCertNo }, '', newUrl);
 
     } catch (err) {
-      console.error(err);
-      showError('Network error or server unavailable. Please try again.');
+      console.error('Verification error:', err);
+      showError(
+        'Verification Timeout / Render Error',
+        `An error occurred while preparing your certificate (${err.message || 'connection issue'}). Click "Retry Verification" to try again.`,
+        true,
+        cleanCertNo
+      );
     } finally {
       showLoading(false);
     }
   }
 
+  // Load image with timeout and CORS fallback
+  function loadTemplateImageSafely(src, timeoutMs = 4500) {
+    return new Promise((resolve, reject) => {
+      let resolved = false;
+      const img = new Image();
+
+      const timer = setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          // Retry without crossOrigin
+          const directImg = new Image();
+          directImg.onload = () => resolve(directImg);
+          directImg.onerror = () => reject(new Error('Template image timed out'));
+          directImg.src = src;
+        }
+      }, timeoutMs);
+
+      img.onload = () => {
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(timer);
+          resolve(img);
+        }
+      };
+
+      img.onerror = () => {
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(timer);
+          // Retry without crossOrigin in case CORS header was blocked
+          const fallbackImg = new Image();
+          fallbackImg.onload = () => resolve(fallbackImg);
+          fallbackImg.onerror = () => reject(new Error('Failed to load certificate template background'));
+          fallbackImg.src = src;
+        }
+      };
+
+      img.crossOrigin = 'anonymous';
+      img.src = src;
+
+      if (img.complete && img.naturalWidth > 0) {
+        resolved = true;
+        clearTimeout(timer);
+        resolve(img);
+      }
+    });
+  }
+
   // Render Flat Certificate Bitmap
   async function renderFlatCertificate() {
-    // 1. Wait for all fonts (Roboto, Sanchez, Outfit, Inter, etc.) to be fully loaded
-    await document.fonts.ready;
+    // 1. Wait for web fonts with a strict 800ms race timeout
+    try {
+      const fontPromise = document.fonts ? document.fonts.ready : Promise.resolve();
+      await Promise.race([fontPromise, new Promise(r => setTimeout(r, 800))]);
+    } catch (e) {
+      console.warn('Font loading check bypassed:', e);
+    }
 
-    // 2. Load the blank template image
-    const templateImg = new Image();
-    templateImg.crossOrigin = 'anonymous';
-
-    await new Promise((resolve, reject) => {
-      templateImg.onload = resolve;
-      templateImg.onerror = () => reject(new Error('Failed to load template image bitmap'));
-      templateImg.src = currentTemplate.imageUrl;
-    });
+    // 2. Load template image with CORS safety fallback
+    const imageUrl = (currentTemplate && currentTemplate.imageUrl) ? currentTemplate.imageUrl : '/template.png';
+    const templateImg = await loadTemplateImageSafely(imageUrl);
 
     // 3. Set native canvas dimensions (naturalWidth × naturalHeight)
-    canvas.width = templateImg.naturalWidth;
-    canvas.height = templateImg.naturalHeight;
+    canvas.width = templateImg.naturalWidth || 1563;
+    canvas.height = templateImg.naturalHeight || 1105;
 
     // 4. Draw template image background
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
     // 5. Draw all text fields using coordinate mapping with auto-font-shrinking
-    const fields = currentTemplate.fields || {};
+    const fields = (currentTemplate && currentTemplate.fields) ? currentTemplate.fields : FALLBACK_REGISTRY.template.fields;
 
     Object.keys(fields).forEach(key => {
       const field = fields[key];
       let val = currentStudent[field.csvColumn || key] || currentStudent[key] || '';
       if (!val && key === 'verification_url') {
-        val = `Verify online at https://disha.mbm.ac.in/ecertificates?cert=${currentStudent.cert_no}`;
+        val = `Verify online at https://disha.mbm.ac.in/ecertificates?cert=${currentStudent.cert_no || ''}`;
       }
 
       // Check placeholder formatting
@@ -180,7 +396,7 @@
       if (field.placeholder && field.placeholder.includes(`{${key}}`)) {
         displayText = field.placeholder.replace(`{${key}}`, val);
       } else if (field.placeholder && field.placeholder.includes('{cert_no}')) {
-        displayText = field.placeholder.replace('{cert_no}', currentStudent.cert_no);
+        displayText = field.placeholder.replace('{cert_no}', currentStudent.cert_no || '');
       }
 
       if (field.textTransform === 'uppercase') {
@@ -235,7 +451,10 @@
 
   // Download High-Res PNG
   function downloadHighResPng() {
-    if (!currentPngDataUrl) return;
+    if (!currentPngDataUrl) {
+      alert('Certificate bitmap is still preparing. Please wait a moment.');
+      return;
+    }
     const link = document.createElement('a');
     link.href = currentPngDataUrl;
     const safeName = (currentStudent.name || 'Student').replace(/[^a-zA-Z0-9]/g, '_');
@@ -245,15 +464,18 @@
     document.body.removeChild(link);
   }
 
-  // Download Print-Ready PDF
+  // Download Print-Ready PDF (A4 Landscape 300 DPI)
   async function downloadPrintReadyPdf() {
-    if (!currentPngDataUrl || !currentStudent) return;
+    if (!currentPngDataUrl || !currentStudent) {
+      alert('Certificate bitmap is still preparing. Please wait a moment.');
+      return;
+    }
 
     try {
       // Check for jsPDF
       const { jsPDF } = window.jspdf || {};
       if (!jsPDF) {
-        alert('PDF generator library is loading, please try again in a few moments.');
+        alert('PDF generator library is initializing. Please click again in 2 seconds.');
         return;
       }
 
@@ -292,7 +514,7 @@
       pdf.save(`Disha_Certificate_${currentStudent.cert_no}_${safeName}.pdf`);
 
     } catch (err) {
-      console.error(err);
+      console.error('PDF generation error:', err);
       alert('Error generating PDF: ' + err.message);
     }
   }
@@ -305,19 +527,27 @@
       copyLinkBtn.innerHTML = `<span>✓</span> Copied!`;
       setTimeout(() => copyLinkBtn.innerHTML = origText, 2500);
     }).catch(() => {
-      prompt('Copy this link:', url);
+      prompt('Copy this verification link:', url);
     });
   }
 
-  function showError(msg) {
+  function showError(title, msg, isRetryable = true, certNo = '') {
     resultContainer.style.display = 'none';
-    errorMessage.textContent = msg;
+    if (errorTitle) errorTitle.textContent = title || 'Certificate Not Found';
+    if (errorMessage) errorMessage.textContent = msg;
+
+    if (retryVerifyBtn) {
+      retryVerifyBtn.style.display = isRetryable ? 'inline-flex' : 'none';
+    }
+
     errorContainer.style.display = 'block';
     errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function showLoading(isLoading) {
     const btn = document.getElementById('searchBtn');
+    if (!btn) return;
+
     if (isLoading) {
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner"></span> Verifying...`;
