@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Certificate Verification Portal | DISHA CSE MBM</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/portal.css">
+  <!-- Vendor PDF generator -->
+  <script src="/js/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="disha-header">
+    <div class="header-inner">
+      <a href="/ecertificates" class="brand-wrapper">
+        <div class="brand-crest">D</div>
+        <div class="brand-info">
+          <span class="brand-title">D I S H A</span>
+          <span class="brand-sub">DEPT OF CSE, MBM UNIVERSITY • JODHPUR</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/ecertificates" class="nav-btn active">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Verification Portal
+        </a>
+        <a href="/admin" class="nav-btn">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Admin Studio
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Search Section -->
+  <section class="portal-hero">
+    <div class="hero-content">
+      <div class="hero-subtitle-tag">
+        <span>MBM UNIVERSITY</span>
+        <span>•</span>
+        <span>OFFICIAL VERIFICATION ENGINE</span>
+      </div>
+      <h1 class="hero-title">Verify & Authenticate E-Certificate</h1>
+      <p class="hero-desc">
+        Enter your unique institutional certificate number below to instantly verify authenticity, view the tamper-proof credential, and download official print-ready copies.
+      </p>
+
+      <!-- Verification Input Form -->
+      <form id="certVerificationForm" class="search-card">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+          <input 
+            type="text" 
+            id="certNumberInput" 
+            class="search-input" 
+            placeholder="e.g. 24CVSCB013" 
+            autocomplete="off" 
+            required
+          >
+        </div>
+        <button type="submit" id="searchBtn" class="search-btn">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Verify Certificate
+        </button>
+      </form>
+
+      <!-- Quick test helper -->
+      <div class="quick-test-bar">
+        <span>Trial Certificate:</span>
+        <button type="button" id="quickTestPill" class="quick-test-pill" title="Click to test with 24CVSCB013">
+          24CVSCB013 (Mayank Aggarwal)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="portal-main">
+    
+    <!-- Error State Display -->
+    <div id="errorContainer" class="error-card" style="display: none;">
+      <div class="error-icon-circle">✕</div>
+      <h3 class="error-title">Certificate Not Found</h3>
+      <p id="errorMessage" class="error-desc">
+        No certificate matching this number was found in our official registry. Please check the serial code and try again.
+      </p>
+      <button onclick="document.getElementById('certNumberInput').focus();" class="action-btn action-btn-primary">
+        Try Another Number
+      </button>
+    </div>
+
+    <!-- Verified Result Card -->
+    <div id="resultContainer" class="verification-card" style="display: none;">
+      
+      <!-- Status Banner -->
+      <div class="verification-status-banner">
+        <div class="status-left">
+          <div class="status-icon-circle">✓</div>
+          <div>
+            <div class="status-title">Official Certificate Verified</div>
+            <div class="status-subtitle">Authenticated against Department of CSE Registry, MBM University</div>
+          </div>
+        </div>
+        <div class="status-badge">
+          Valid & Authentic
+        </div>
+      </div>
+
+      <!-- Record Details Grid -->
+      <div class="record-details-grid">
+        <div class="record-item">
+          <span class="record-label">Candidate Name</span>
+          <span id="studentName" class="record-val">-</span>
+        </div>
+        <div class="record-item">
+          <span class="record-label">Certificate Number</span>
+          <span id="certNumberDisplay" class="record-val highlight">-</span>
+        </div>
+        <div class="record-item">
+          <span class="record-label">Program / Branch</span>
+          <span id="branchName" class="record-val">-</span>
+        </div>
+        <div class="record-item">
+          <span class="record-label">Event / Activity</span>
+          <span id="eventTitle" class="record-val">-</span>
+        </div>
+        <div class="record-item">
+          <span class="record-label">Date of Issue</span>
+          <span id="issueDate" class="record-val">-</span>
+        </div>
+        <div class="record-item">
+          <span class="record-label">Type of Award</span>
+          <span id="certType" class="record-val">-</span>
+        </div>
+      </div>
+
+      <!-- The Flat Image Canvas Result -->
+      <!-- Rendered directly from HTML5 Canvas to a single flat PNG dataURL -->
+      <!-- Guaranteed 100% immune to CSS text overlay breaks across all screen sizes -->
+      <div class="certificate-preview-area">
+        <div class="certificate-image-container">
+          <img id="flatCertImage" class="certificate-flat-img" src="" alt="Verified Certificate">
+        </div>
+      </div>
+
+      <!-- Action Buttons Bar -->
+      <div class="action-buttons-bar">
+        <div class="actions-group">
+          <button id="downloadPngBtn" class="action-btn action-btn-primary" title="Download High-Resolution PNG">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download High-Res PNG
+          </button>
+
+          <button id="downloadPdfBtn" class="action-btn action-btn-accent" title="Download Print-Ready Landscape PDF">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            Download Print-Ready PDF
+          </button>
+
+          <button id="printCertBtn" class="action-btn" title="Print Certificate directly">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Print
+          </button>
+        </div>
+
+        <div class="actions-group">
+          <button id="copyLinkBtn" class="action-btn" title="Copy verification URL to share">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            Copy Verification Link
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="disha-footer">
+    <div class="footer-inner">
+      <span>© Department of Computer Science & Engineering, MBM University, Jodhpur. All Rights Reserved.</span>
+      <span>DISHA E-Certificate Engine v2.0 • Zero CSS Layout Shift Guarantee</span>
+    </div>
+  </footer>
+
+  <script src="/js/portal.js"></script>
+</body>
+</html>

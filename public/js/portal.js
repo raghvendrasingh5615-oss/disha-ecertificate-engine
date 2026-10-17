@@ -78,11 +78,36 @@
       errorContainer.style.display = 'none';
       resultContainer.style.display = 'none';
 
-      const res = await fetch(`/api/certificates/${encodeURIComponent(certNo)}`);
-      const data = await res.json();
+      let data = null;
+      try {
+        const res = await fetch(`/api/certificates/${encodeURIComponent(certNo)}`);
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {
+        console.warn('API route unavailable, trying static fallback...');
+      }
 
-      if (!res.ok || !data.found) {
-        showError(data.error || `No certificate record found for "${certNo}". Please check the certificate number and try again.`);
+      // Static hosting fallback (for pure static Netlify deployments)
+      if (!data || !data.found) {
+        try {
+          const staticRes = await fetch('/data/database.json');
+          if (staticRes.ok) {
+            const staticDb = await staticRes.json();
+            const cleanCertNo = certNo.trim().toUpperCase();
+            const student = staticDb.students.find(s => s.cert_no && s.cert_no.trim().toUpperCase() === cleanCertNo);
+            if (student) {
+              const template = staticDb.templates.find(t => t.id === student.template_id) || staticDb.templates[0];
+              data = { found: true, student, template };
+            }
+          }
+        } catch (e) {
+          console.error('Static fallback failed:', e);
+        }
+      }
+
+      if (!data || !data.found) {
+        showError(`No certificate record found for "${certNo}". Please check the certificate number and try again.`);
         return;
       }
 

@@ -84,6 +84,33 @@ disha-ecertificate-engine/
 
 ---
 
+## 🌐 Deploy to Netlify in 1-Click
+
+This repository is fully configured with `netlify.toml`, serverless API functions (`netlify/functions/api.js`), and static CDN fallbacks for immediate deployment on Netlify.
+
+### Option A: Connect via GitHub (Zero-Config, Recommended)
+1. Log in to [Netlify Dashboard](https://app.netlify.com).
+2. Click **Add new site** > **Import an existing project**.
+3. Select **GitHub** and choose the repository: [`raghvendrasingh5615-oss/disha-ecertificate-engine`](https://github.com/raghvendrasingh5615-oss/disha-ecertificate-engine).
+4. Netlify will automatically detect settings from `netlify.toml`:
+   - **Build command**: `npm run build` (or leave empty)
+   - **Publish directory**: `public`
+   - **Functions directory**: `netlify/functions`
+5. Click **Deploy disha-ecertificate-engine**!
+
+### Option B: Netlify CLI
+Run directly from your terminal:
+```bash
+npx netlify deploy --prod
+```
+
+### Option C: Netlify Drag & Drop
+1. Go to [app.netlify.com/drop](https://app.netlify.com/drop).
+2. Drag and drop the `public` directory into the browser window.
+3. Your portal is instantly live!
+
+---
+
 ## 🔌 Easy Next.js / Disha Codebase Merging Guide
 
 To merge this engine into Disha's existing Next.js application (`disha.mbm.ac.in`):

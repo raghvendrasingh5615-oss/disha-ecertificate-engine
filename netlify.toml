@@ -1,0 +1,36 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["data/**", "public/data/**"]
+
+# Root redirect to Verification Portal
+[[redirects]]
+  from = "/"
+  to = "/ecertificates.html"
+  status = 200
+
+# Route /ecertificates
+[[redirects]]
+  from = "/ecertificates"
+  to = "/ecertificates.html"
+  status = 200
+
+# Route /admin and /admin/certificates
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/certificates"
+  to = "/admin.html"
+  status = 200
+
+# API endpoints to Netlify Serverless Function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200

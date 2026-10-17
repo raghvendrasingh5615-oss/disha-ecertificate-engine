@@ -66,12 +66,34 @@
     await loadInitialStudents();
   }
 
-  // Load Active Template from backend
+  // Load Active Template from backend (with static CDN fallback for Netlify)
   async function loadActiveTemplate() {
     try {
-      const res = await fetch('/api/templates/active');
-      if (!res.ok) throw new Error('Failed to load active template');
-      templateConfig = await res.json();
+      let data = null;
+      try {
+        const res = await fetch('/api/templates/active');
+        if (res.ok) {
+          data = await res.json();
+        }
+      } catch (e) {
+        console.warn('API /api/templates/active failed, trying static fallback...');
+      }
+
+      // Static fallback for Netlify
+      if (!data) {
+        try {
+          const staticRes = await fetch('/data/database.json');
+          if (staticRes.ok) {
+            const staticDb = await staticRes.json();
+            data = staticDb.templates.find(t => t.id === staticDb.activeTemplateId) || staticDb.templates[0];
+          }
+        } catch (e) {
+          console.warn('Static template fallback error:', e);
+        }
+      }
+
+      if (!data) throw new Error('Failed to load active template');
+      templateConfig = data;
 
       document.getElementById('templateNameInput').value = templateConfig.name || '';
       document.getElementById('eventNameInput').value = templateConfig.event || '';
@@ -101,14 +123,33 @@
   // Load initial students (13 records including 24CVSCB013)
   async function loadInitialStudents() {
     try {
-      const res = await fetch('/api/certificates');
-      if (res.ok) {
-        const certs = await res.json();
-        if (Array.isArray(certs) && certs.length > 0) {
-          studentsData = certs;
-          totalRowsCount.textContent = `${studentsData.length} Students`;
-          renderCsvTable();
+      let certs = null;
+      try {
+        const res = await fetch('/api/certificates');
+        if (res.ok) {
+          certs = await res.json();
         }
+      } catch (e) {
+        console.warn('API /api/certificates failed, trying static fallback...');
+      }
+
+      // Static fallback for Netlify
+      if (!certs || !Array.isArray(certs) || certs.length === 0) {
+        try {
+          const staticRes = await fetch('/data/database.json');
+          if (staticRes.ok) {
+            const staticDb = await staticRes.json();
+            certs = staticDb.students;
+          }
+        } catch (e) {
+          console.warn('Static students fallback error:', e);
+        }
+      }
+
+      if (Array.isArray(certs) && certs.length > 0) {
+        studentsData = certs;
+        totalRowsCount.textContent = `${studentsData.length} Students`;
+        renderCsvTable();
       }
     } catch (err) {
       console.error('Error loading certificates:', err);
