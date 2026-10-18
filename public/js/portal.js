@@ -142,6 +142,56 @@
   let currentPngDataUrl = null;
   let lastSearchedCertNo = '';
 
+  // Robust student matcher: matches exact, normalized alphanumeric, name substring, and serial
+  function findStudentInList(students, query) {
+    if (!students || !Array.isArray(students) || !query) return null;
+    const raw = String(query).trim();
+    if (!raw) return null;
+
+    // 1. Direct case-insensitive match on cert_no
+    let match = students.find(s => s.cert_no && s.cert_no.trim().toUpperCase() === raw.toUpperCase());
+    if (match) return match;
+
+    // 2. Alphanumeric normalized match on cert_no (strips spaces, hyphens, underscores, dots)
+    const normQuery = raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    if (normQuery.length > 0) {
+      match = students.find(s => {
+        if (!s.cert_no) return false;
+        const sNorm = s.cert_no.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+        return sNorm === normQuery;
+      });
+      if (match) return match;
+    }
+
+    // 3. Exact candidate name match (case-insensitive)
+    const lowerQuery = raw.toLowerCase();
+    match = students.find(s => s.name && s.name.trim().toLowerCase() === lowerQuery);
+    if (match) return match;
+
+    // 4. Candidate name substring match (e.g. "Mayank", "Mayank Aggarwal", "Kuldeep")
+    match = students.find(s => s.name && s.name.toLowerCase().includes(lowerQuery));
+    if (match) return match;
+
+    // 5. Trailing serial number match (e.g., '013' or '13' matches '24CVSCB013')
+    if (/^\d{1,4}$/.test(raw)) {
+      const padded = raw.padStart(3, '0');
+      match = students.find(s => s.cert_no && s.cert_no.endsWith(padded));
+      if (match) return match;
+    }
+
+    // 6. Substring match on normalized cert_no
+    if (normQuery.length >= 3) {
+      match = students.find(s => {
+        if (!s.cert_no) return false;
+        const sNorm = s.cert_no.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+        return sNorm.includes(normQuery) || normQuery.includes(sNorm);
+      });
+      if (match) return match;
+    }
+
+    return null;
+  }
+
   async function init() {
     bindEvents();
 
@@ -152,17 +202,17 @@
       certInput.value = certQuery.trim().toUpperCase();
       await verifyCertificate(certInput.value);
     } else {
-      // Pre-fill with trial certificate 24CVSCB013
-      certInput.value = '24CVSCB013';
+      // Do NOT autofill when opening portal! Keep blank so user types their own credentials
+      certInput.value = '';
     }
   }
 
   function bindEvents() {
     certForm.addEventListener('submit', async e => {
       e.preventDefault();
-      const certNo = certInput.value.trim().toUpperCase();
+      const certNo = certInput.value.trim();
       if (!certNo) {
-        showError('Missing Certificate Number', 'Please enter a certificate number to verify.', false);
+        showError('Missing Certificate Number', 'Please enter a certificate number or candidate name to verify.', false);
         return;
       }
       await verifyCertificate(certNo);
@@ -182,7 +232,7 @@
 
     if (retryVerifyBtn) {
       retryVerifyBtn.addEventListener('click', async () => {
-        const certToRetry = lastSearchedCertNo || certInput.value.trim().toUpperCase() || '24CVSCB013';
+        const certToRetry = lastSearchedCertNo || certInput.value.trim() || '24CVSCB013';
         certInput.value = certToRetry;
         await verifyCertificate(certToRetry);
       });
@@ -208,13 +258,13 @@
     }
   }
 
-  // Verify Certificate by Number
-  async function verifyCertificate(certNo) {
-    const cleanCertNo = (certNo || '').trim().toUpperCase();
-    lastSearchedCertNo = cleanCertNo;
+  // Verify Certificate by Number or Candidate Name
+  async function verifyCertificate(searchQuery) {
+    const rawQuery = (searchQuery || '').trim();
+    lastSearchedCertNo = rawQuery;
 
-    if (!cleanCertNo) {
-      showError('Empty Input', 'Please enter a certificate number before searching.', false);
+    if (!rawQuery) {
+      showError('Empty Input', 'Please enter a certificate number or candidate name before searching.', false);
       return;
     }
 
@@ -227,7 +277,7 @@
 
       // 1. Try Backend API
       try {
-        const res = await fetchWithTimeout(`/api/certificates/${encodeURIComponent(cleanCertNo)}`, 3500);
+        const res = await fetchWithTimeout(`/api/certificates/${encodeURIComponent(rawQuery)}`, 3500);
         if (res.ok) {
           data = await res.json();
         }
@@ -235,13 +285,13 @@
         console.warn('Backend API endpoint unavailable or timed out, trying static database...', e);
       }
 
-      // 2. Try Static CDN database.json (for Netlify / static hosting)
+      // 2. Try Static CDN database.json (for Netlify / static hosting) with smart matching
       if (!data || !data.found) {
         try {
           const staticRes = await fetchWithTimeout('/data/database.json', 3500);
           if (staticRes.ok) {
             const staticDb = await staticRes.json();
-            const student = staticDb.students.find(s => s.cert_no && s.cert_no.trim().toUpperCase() === cleanCertNo);
+            const student = findStudentInList(staticDb.students, rawQuery);
             if (student) {
               const template = staticDb.templates.find(t => t.id === student.template_id) || staticDb.templates[0];
               data = { found: true, student, template };
@@ -252,9 +302,9 @@
         }
       }
 
-      // 3. Fall back to embedded offline registry
+      // 3. Fall back to embedded offline registry with smart matching
       if (!data || !data.found) {
-        const fallbackStudent = FALLBACK_REGISTRY.students.find(s => s.cert_no === cleanCertNo);
+        const fallbackStudent = findStudentInList(FALLBACK_REGISTRY.students, rawQuery);
         if (fallbackStudent) {
           data = {
             found: true,
@@ -268,9 +318,9 @@
       if (!data || !data.found) {
         showError(
           'Certificate Not Found',
-          `No official record was found matching certificate number "${cleanCertNo}". Please verify the serial number or try the trial certificate below.`,
+          `No official record was found matching "${rawQuery}". Please check the certificate number (e.g., 24CVSCB013) or candidate name, or click the trial button below.`,
           true,
-          cleanCertNo
+          rawQuery
         );
         return;
       }
@@ -278,9 +328,15 @@
       currentStudent = data.student;
       currentTemplate = data.template || FALLBACK_REGISTRY.template;
 
+      // Update input field to show the canonical certificate number
+      if (currentStudent.cert_no) {
+        certInput.value = currentStudent.cert_no;
+      }
+
       // Populate textual metadata in verified result card
+      const canonicalCert = currentStudent.cert_no || rawQuery;
       studentNameEl.textContent = currentStudent.name || 'Candidate';
-      certNumberDisplayEl.textContent = currentStudent.cert_no || cleanCertNo;
+      certNumberDisplayEl.textContent = canonicalCert;
       eventTitleEl.textContent = currentStudent.event || currentTemplate.event || 'College Workshop / Event';
       branchNameEl.textContent = `${currentStudent.branch || 'CSE'} ${currentStudent.year ? `(${currentStudent.year})` : ''}`;
       issueDateEl.textContent = currentStudent.date || 'N/A';
@@ -295,8 +351,8 @@
       window.scrollTo({ top: Math.max(0, yPos), behavior: 'smooth' });
 
       // Update URL without full refresh for easy sharing
-      const newUrl = `${window.location.pathname}?cert=${encodeURIComponent(cleanCertNo)}`;
-      window.history.replaceState({ cert: cleanCertNo }, '', newUrl);
+      const newUrl = `${window.location.pathname}?cert=${encodeURIComponent(canonicalCert)}`;
+      window.history.replaceState({ cert: canonicalCert }, '', newUrl);
 
     } catch (err) {
       console.error('Verification error:', err);

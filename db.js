@@ -74,11 +74,57 @@ const db = {
     return false;
   },
 
-  getCertificate(certNo) {
-    if (!certNo) return null;
-    const cleanCertNo = certNo.trim().toUpperCase();
+  getCertificate(query) {
+    if (!query) return null;
+    const raw = String(query).trim();
+    if (!raw) return null;
     const data = readDb();
-    const student = data.students.find(s => s.cert_no && s.cert_no.trim().toUpperCase() === cleanCertNo);
+
+    // 1. Exact case-insensitive match on cert_no
+    let student = data.students.find(s => s.cert_no && s.cert_no.trim().toUpperCase() === raw.toUpperCase());
+
+    // 2. Alphanumeric normalized match on cert_no (strips spaces, hyphens, underscores, dots)
+    if (!student) {
+      const normQuery = raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (normQuery.length > 0) {
+        student = data.students.find(s => {
+          if (!s.cert_no) return false;
+          const sNorm = s.cert_no.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+          return sNorm === normQuery;
+        });
+      }
+    }
+
+    // 3. Exact student name match (case-insensitive)
+    if (!student) {
+      const lowerQuery = raw.toLowerCase();
+      student = data.students.find(s => s.name && s.name.trim().toLowerCase() === lowerQuery);
+    }
+
+    // 4. Student name substring match (e.g. "Mayank", "Mayank Aggarwal", "Kuldeep")
+    if (!student) {
+      const lowerQuery = raw.toLowerCase();
+      student = data.students.find(s => s.name && s.name.toLowerCase().includes(lowerQuery));
+    }
+
+    // 5. Numeric serial match (e.g., '013' or '13' matches '24CVSCB013')
+    if (!student && /^\d{1,4}$/.test(raw)) {
+      const padded = raw.padStart(3, '0');
+      student = data.students.find(s => s.cert_no && s.cert_no.endsWith(padded));
+    }
+
+    // 6. Substring match on normalized cert_no
+    if (!student) {
+      const normQuery = raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (normQuery.length >= 3) {
+        student = data.students.find(s => {
+          if (!s.cert_no) return false;
+          const sNorm = s.cert_no.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+          return sNorm.includes(normQuery) || normQuery.includes(sNorm);
+        });
+      }
+    }
+
     if (!student) return null;
 
     const template = data.templates.find(t => t.id === student.template_id) || db.getActiveTemplate();
