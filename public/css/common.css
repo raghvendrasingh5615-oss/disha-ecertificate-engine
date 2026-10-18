@@ -1,19 +1,19 @@
 /* Common Design System Tokens and Utilities */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Sanchez:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=Sanchez:ital@0;1&display=swap');
 
 :root {
-  --disha-blue: #1b4f91;
-  --disha-blue-hover: #153e73;
-  --disha-red: #a81d33;
-  --disha-red-hover: #861628;
+  --disha-blue: #1d6098;
+  --disha-blue-hover: #154c79;
+  --disha-red: #c03653;
+  --disha-red-hover: #a12842;
   --disha-red-light: #fdf2f4;
   
-  --primary: #1b4f91;
-  --primary-hover: #153e73;
+  --primary: #1d6098;
+  --primary-hover: #154c79;
   --primary-light: #ebf3fb;
-  --primary-glow: rgba(27, 79, 145, 0.25);
-  --accent: #a81d33;
-  --accent-hover: #861628;
+  --primary-glow: rgba(29, 96, 152, 0.25);
+  --accent: #c03653;
+  --accent-hover: #a12842;
   --accent-light: #fdf2f4;
   --success: #10b981;
   --success-dark: #059669;
@@ -31,8 +31,8 @@
   --gray-800: #1e293b;
   --gray-900: #0f172a;
   
-  --font-heading: 'Roboto', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Open Sans', 'Roboto', sans-serif;
+  --font-body: 'Open Sans', 'Roboto', sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
   --radius-sm: 6px;
@@ -136,12 +136,21 @@ body {
 }
 
 .disha-official-logo {
-  height: 44px;
-  max-height: 48px;
+  height: 48px;
+  max-height: 52px;
   width: auto;
   object-fit: contain;
   display: block;
+  transition: transform 0.2s ease;
 }
+
+.brand-wrapper:hover .disha-official-logo {
+  transform: scale(1.02);
+}
+
+.disha-nav-links {
+  display: flex;
+  align-items: center;
   gap: 1.5rem;
   flex-wrap: wrap;
 }
@@ -341,6 +350,10 @@ body {
   .header-inner {
     padding: 0.5rem 0.75rem;
     gap: 0.5rem;
+  }
+  .disha-official-logo {
+    height: 36px;
+    max-height: 40px;
   }
   .brand-crest {
     width: 36px;
