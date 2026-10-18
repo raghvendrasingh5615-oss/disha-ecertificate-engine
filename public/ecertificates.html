@@ -57,7 +57,7 @@
             type="text" 
             id="certNumberInput" 
             class="search-input" 
-            placeholder="e.g. 24CVSCB013" 
+            placeholder="Enter Certificate Number" 
             autocomplete="off" 
             required
           >
@@ -69,14 +69,6 @@
           Verify Certificate
         </button>
       </form>
-
-      <!-- Quick test helper -->
-      <div class="quick-test-bar">
-        <span>Trial Certificate:</span>
-        <button type="button" id="quickTestPill" class="quick-test-pill" title="Click to test with 24CVSCB013">
-          24CVSCB013 (Mayank Aggarwal)
-        </button>
-      </div>
     </div>
   </section>
 
@@ -97,10 +89,7 @@
           </svg>
           Retry Verification
         </button>
-        <button type="button" id="errorTryDemoBtn" class="action-btn action-btn-primary">
-          Verify 24CVSCB013 (Mayank Aggarwal)
-        </button>
-        <button type="button" onclick="document.getElementById('certNumberInput').focus();" class="action-btn">
+        <button type="button" onclick="document.getElementById('certNumberInput').focus();" class="action-btn action-btn-primary">
           Search Different Number
         </button>
       </div>

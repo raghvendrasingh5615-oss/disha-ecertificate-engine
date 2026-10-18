@@ -218,10 +218,12 @@
       await verifyCertificate(certNo);
     });
 
-    quickTestPill.addEventListener('click', async () => {
-      certInput.value = '24CVSCB013';
-      await verifyCertificate('24CVSCB013');
-    });
+    if (quickTestPill) {
+      quickTestPill.addEventListener('click', async () => {
+        certInput.value = '24CVSCB013';
+        await verifyCertificate('24CVSCB013');
+      });
+    }
 
     if (errorTryDemoBtn) {
       errorTryDemoBtn.addEventListener('click', async () => {
@@ -318,7 +320,7 @@
       if (!data || !data.found) {
         showError(
           'Certificate Not Found',
-          `No official record was found matching "${rawQuery}". Please check the certificate number (e.g., 24CVSCB013) or candidate name, or click the trial button below.`,
+          `No official record was found matching "${rawQuery}". Please check the certificate number or candidate name and try again.`,
           true,
           rawQuery
         );
