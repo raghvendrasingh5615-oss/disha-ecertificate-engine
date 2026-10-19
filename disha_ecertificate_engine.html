@@ -830,6 +830,29 @@
           renderAdminCanvas();
         });
 
+        // Blank template upload
+        const uploadTemplateInput = document.getElementById('adminUploadTemplate');
+        if (uploadTemplateInput) {
+          uploadTemplateInput.addEventListener('change', e => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+              const img = new Image();
+              img.onload = () => {
+                templateImg = img;
+                templateConfig.imageUrl = ev.target.result;
+                templateConfig.naturalWidth = img.naturalWidth;
+                templateConfig.naturalHeight = img.naturalHeight;
+                renderAdminCanvas();
+              };
+              img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+          });
+        }
+
         // Inspector inputs
         const bindNum = (id, key) => {
           document.getElementById(id).addEventListener('input', e => {
