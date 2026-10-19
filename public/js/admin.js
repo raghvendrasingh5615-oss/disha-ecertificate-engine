@@ -103,20 +103,37 @@
     });
   }
 
-  // Load Active Template from backend (with static CDN fallback for Netlify)
+  // Load Active Template from backend (with localStorage + static CDN fallback for Netlify)
   async function loadActiveTemplate() {
     try {
       let data = null;
-      try {
-        const res = await fetch('/api/templates/active');
-        if (res.ok) {
-          data = await res.json();
+
+      // 1. Check if user has a custom saved template in localStorage
+      const savedLocal = localStorage.getItem('disha_active_template');
+      if (savedLocal) {
+        try {
+          data = JSON.parse(savedLocal);
+        } catch (e) {
+          console.warn('Failed to parse local template:', e);
         }
-      } catch (e) {
-        console.warn('API /api/templates/active failed, trying static fallback...');
       }
 
-      // Static fallback for Netlify
+      // 2. Try Backend API if no local override
+      if (!data) {
+        try {
+          const res = await fetch('/api/templates/active');
+          if (res.ok) {
+            const contentType = res.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+              data = await res.json();
+            }
+          }
+        } catch (e) {
+          console.warn('API /api/templates/active failed, trying static fallback...');
+        }
+      }
+
+      // 3. Static fallback for Netlify
       if (!data) {
         try {
           const staticRes = await fetch('/data/database.json');
@@ -157,20 +174,35 @@
     }
   }
 
-  // Load initial students (13 records including 24CVSCB013)
+  // Load initial students (13 records including 24CVSCB013, with localStorage support)
   async function loadInitialStudents() {
     try {
       let certs = null;
-      try {
-        const res = await fetch('/api/certificates');
-        if (res.ok) {
-          certs = await res.json();
-        }
-      } catch (e) {
-        console.warn('API /api/certificates failed, trying static fallback...');
+
+      // 1. Check localStorage for custom saved students
+      const localStudents = localStorage.getItem('disha_custom_students');
+      if (localStudents) {
+        try {
+          certs = JSON.parse(localStudents);
+        } catch (e) {}
       }
 
-      // Static fallback for Netlify
+      // 2. Try backend API
+      if (!certs || !Array.isArray(certs) || certs.length === 0) {
+        try {
+          const res = await fetch('/api/certificates');
+          if (res.ok) {
+            const contentType = res.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+              certs = await res.json();
+            }
+          }
+        } catch (e) {
+          console.warn('API /api/certificates failed, trying static fallback...');
+        }
+      }
+
+      // 3. Static fallback for Netlify
       if (!certs || !Array.isArray(certs) || certs.length === 0) {
         try {
           const staticRes = await fetch('/data/database.json');
@@ -659,6 +691,10 @@
     // Upload Blank Template Image
     document.getElementById('uploadTemplateInput').addEventListener('change', uploadBlankTemplate);
 
+    // Reset Template Button
+    const resetTemplateBtn = document.getElementById('resetTemplateBtn');
+    if (resetTemplateBtn) resetTemplateBtn.addEventListener('click', resetToDefaultTemplate);
+
     // Maximize Canvas Listeners (Toolbar & Canvas Top-Right)
     const toolbarMaxBtn = document.getElementById('toolbarMaximizeBtn');
     const canvasMaxBtn = document.getElementById('maximizeCanvasBtn');
@@ -903,59 +939,173 @@
     });
   }
 
-  // Upload Blank Template Image
+  // Upload Blank Template Image (Client-side instant FileReader + safe backend sync)
   async function uploadBlankTemplate(e) {
-    const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('templateImage', file);
+    // Check if it's an image file
+    if (file.type && !file.type.startsWith('image/')) {
+      showToast('Please select a valid image file (PNG, JPG, WebP).', 'warning');
+      e.target.value = '';
+      return;
+    }
 
     try {
-      showToast('Uploading template image...', 'info');
-      const res = await fetch('/api/templates/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Upload failed');
+      showToast('Loading template image...', 'info');
 
-      templateConfig.imageUrl = data.imageUrl;
-      templateImage = new Image();
-      templateImage.crossOrigin = 'anonymous';
-      templateImage.onload = () => {
-        imageLoaded = true;
-        templateConfig.naturalWidth = templateImage.naturalWidth;
-        templateConfig.naturalHeight = templateImage.naturalHeight;
-        imageDimsEl.textContent = `${templateImage.naturalWidth} × ${templateImage.naturalHeight} px`;
-        fitCanvasToViewport();
-        showToast('New blank template loaded successfully!', 'success');
-      };
-      templateImage.src = data.imageUrl;
+      // 1. Read file client-side immediately as Data URL (instant, works offline & on Netlify/mobile)
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Failed to read selected image file.'));
+        reader.readAsDataURL(file);
+      });
+
+      // 2. Load into an Image object to get natural dimensions and verify validity
+      await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          templateImage = img;
+          imageLoaded = true;
+
+          if (!templateConfig) {
+            templateConfig = { id: 'tmpl-' + Date.now(), fields: {} };
+          }
+          templateConfig.imageUrl = dataUrl;
+          templateConfig.naturalWidth = img.naturalWidth || 1563;
+          templateConfig.naturalHeight = img.naturalHeight || 1105;
+
+          imageDimsEl.textContent = `${templateConfig.naturalWidth} × ${templateConfig.naturalHeight} px`;
+
+          fitCanvasToViewport();
+          renderCanvas();
+
+          // Persist in localStorage so work is not lost on reload
+          try {
+            localStorage.setItem('disha_active_template', JSON.stringify(templateConfig));
+          } catch (lsErr) {
+            console.warn('LocalStorage save quota exceeded (large image):', lsErr);
+          }
+
+          resolve();
+        };
+        img.onerror = () => reject(new Error('Selected file could not be parsed as an image.'));
+        img.src = dataUrl;
+      });
+
+      showToast('New blank template loaded successfully!', 'success');
+
+      // 3. Optional background server upload for local Node server (never block client UI)
+      try {
+        const formData = new FormData();
+        const safeFilename = (file.name || 'template.png').replace(/[^\x00-\x7F]/g, '_');
+        formData.append('templateImage', file, safeFilename);
+
+        const res = await fetch('/api/templates/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            if (data && data.success && data.imageUrl && !data.imageUrl.startsWith('/template.png')) {
+              templateConfig.imageUrl = data.imageUrl;
+            }
+          }
+        }
+      } catch (backendErr) {
+        // Expected on static / Netlify serverless hosts - client-side dataUrl is already active
+        console.info('Backend upload skipped (static/serverless environment). Using client-side template.');
+      }
     } catch (err) {
-      console.error(err);
-      showToast('Error uploading blank template: ' + err.message, 'error');
+      console.error('Error loading blank template:', err);
+      showToast('Error loading blank template: ' + (err.message || 'Unknown error'), 'error');
+    } finally {
+      // Clear input so selecting the same file again triggers change event
+      e.target.value = '';
     }
   }
 
-  // Save Template Config to Backend Database
+  // Save Template Config to Backend Database & LocalStorage
   async function saveTemplateConfig() {
     try {
-      templateConfig.name = document.getElementById('templateNameInput').value;
-      templateConfig.event = document.getElementById('eventNameInput').value;
+      if (!templateConfig) return;
+      templateConfig.name = document.getElementById('templateNameInput').value || templateConfig.name || 'Custom Certificate Template';
+      templateConfig.event = document.getElementById('eventNameInput').value || templateConfig.event || 'College Event / Workshop';
 
-      const res = await fetch('/api/templates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(templateConfig)
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Failed to save');
+      // 1. Always save in browser localStorage first (resilient against static/Netlify hosting)
+      try {
+        localStorage.setItem('disha_active_template', JSON.stringify(templateConfig));
+      } catch (lsErr) {
+        console.warn('LocalStorage save quota exceeded:', lsErr);
+      }
 
-      showToast('Template coordinates & config saved to database!', 'success');
+      // 2. Attempt saving to backend API if available
+      let savedToBackend = false;
+      try {
+        const res = await fetch('/api/templates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(templateConfig)
+        });
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            if (data && data.success) {
+              savedToBackend = true;
+            }
+          }
+        }
+      } catch (e) {
+        console.info('Backend save skipped/failed:', e);
+      }
+
+      if (savedToBackend) {
+        showToast('Template coordinates & config saved to database!', 'success');
+      } else {
+        showToast('Template coordinates & config saved locally!', 'success');
+      }
     } catch (err) {
       console.error(err);
       showToast('Error saving template: ' + err.message, 'error');
+    }
+  }
+
+  // Reset to Default Official Template
+  async function resetToDefaultTemplate() {
+    if (!confirm('Reset certificate canvas back to the default Smart Conveyer Belt template?')) return;
+    try {
+      localStorage.removeItem('disha_active_template');
+      const staticRes = await fetch('/data/database.json');
+      if (staticRes.ok) {
+        const staticDb = await staticRes.json();
+        templateConfig = staticDb.templates.find(t => t.id === staticDb.activeTemplateId) || staticDb.templates[0];
+      }
+      if (templateConfig) {
+        document.getElementById('templateNameInput').value = templateConfig.name || '';
+        document.getElementById('eventNameInput').value = templateConfig.event || '';
+        templateImage = new Image();
+        templateImage.crossOrigin = 'anonymous';
+        templateImage.onload = () => {
+          imageLoaded = true;
+          templateConfig.naturalWidth = templateImage.naturalWidth;
+          templateConfig.naturalHeight = templateImage.naturalHeight;
+          imageDimsEl.textContent = `${templateImage.naturalWidth} × ${templateImage.naturalHeight} px`;
+          fitCanvasToViewport();
+          renderFieldChips();
+          updateInspector();
+          renderCanvas();
+          showToast('Template reset to default workshop template!', 'info');
+        };
+        templateImage.src = templateConfig.imageUrl;
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error resetting template: ' + e.message, 'error');
     }
   }
 
@@ -1095,7 +1245,7 @@
     });
   }
 
-  // Save student records to database
+  // Save student records to database & LocalStorage
   async function saveRecordsToDatabase() {
     if (studentsData.length === 0) {
       alert('No student records to save. Load a CSV first.');
@@ -1103,19 +1253,44 @@
     }
 
     try {
-      showToast('Saving records to database...', 'info');
-      const res = await fetch('/api/certificates/bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          students: studentsData,
-          templateId: templateConfig.id
-        })
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Failed to save');
+      showToast('Saving records...', 'info');
 
-      showToast(`Saved ${studentsData.length} certificates to database!`, 'success');
+      // 1. Save to localStorage
+      try {
+        localStorage.setItem('disha_custom_students', JSON.stringify(studentsData));
+      } catch (lsErr) {
+        console.warn('LocalStorage save quota exceeded for students:', lsErr);
+      }
+
+      // 2. Attempt backend API save
+      let savedToBackend = false;
+      try {
+        const res = await fetch('/api/certificates/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            students: studentsData,
+            templateId: templateConfig ? templateConfig.id : 'tmpl-smart-conveyer-2024'
+          })
+        });
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            if (data && data.success) {
+              savedToBackend = true;
+            }
+          }
+        }
+      } catch (backendErr) {
+        console.info('Backend bulk save skipped/failed:', backendErr);
+      }
+
+      if (savedToBackend) {
+        showToast(`Saved ${studentsData.length} certificates to database!`, 'success');
+      } else {
+        showToast(`Saved ${studentsData.length} certificates locally in browser!`, 'success');
+      }
     } catch (err) {
       console.error(err);
       showToast('Error saving certificates: ' + err.message, 'error');

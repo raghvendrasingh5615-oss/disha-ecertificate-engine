@@ -59,6 +59,10 @@ app.get(['/admin', '/admin/certificates'], (req, res) => {
   res.sendFile('admin.html', { root: path.join(__dirname, 'public') });
 });
 
+app.get(['/template', '/certificate-template'], (req, res) => {
+  res.sendFile('certificate_template.html', { root: path.join(__dirname, 'public') });
+});
+
 // APIs
 // 1. Get Active Template
 app.get('/api/templates/active', (req, res) => {

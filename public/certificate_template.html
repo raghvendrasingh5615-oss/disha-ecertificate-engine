@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Institutional Printable Certificate Template | DISHA MBM</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       CSS RESET & BASE DESIGN TOKENS
+       ========================================================= */
+    :root {
+      --bg-page: #0f172a;
+      --card-bg: #fdfbf7;
+      --primary-navy: #0b1c3d;
+      --primary-gold: #c59b27;
+      --gold-light: #f5e7a9;
+      --gold-dark: #8c6b16;
+      --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+      --seal-gradient: radial-gradient(circle, #ffe082 0%, #d4af37 60%, #996515 100%);
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border-outer: #0b1c3d;
+      --border-inner: #c59b27;
+    }
+
+    /* THEMES */
+    body.theme-gold {
+      --primary-navy: #0b1c3d;
+      --primary-gold: #c59b27;
+      --card-bg: #fdfbf7;
+      --border-outer: #0b1c3d;
+      --border-inner: #c59b27;
+    }
+
+    body.theme-emerald {
+      --primary-navy: #064e3b;
+      --primary-gold: #d97706;
+      --card-bg: #f9fbf9;
+      --border-outer: #064e3b;
+      --border-inner: #d97706;
+      --gold-gradient: linear-gradient(135deg, #d97706 0%, #fde68a 35%, #b45309 70%, #fef3c7 100%);
+    }
+
+    body.theme-burgundy {
+      --primary-navy: #4a0e17;
+      --primary-gold: #c59b27;
+      --card-bg: #fcf9f9;
+      --border-outer: #4a0e17;
+      --border-inner: #c59b27;
+      --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 30%, #8c6b16 70%, #e6c875 100%);
+    }
+
+    body.theme-minimal {
+      --primary-navy: #0f172a;
+      --primary-gold: #475569;
+      --card-bg: #ffffff;
+      --border-outer: #0f172a;
+      --border-inner: #94a3b8;
+      --gold-gradient: linear-gradient(135deg, #334155 0%, #64748b 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-page);
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px;
+      overflow-x: auto;
+    }
+
+    /* =========================================================
+       FLOATING TOOLBAR (HIDDEN IN PRINT)
+       ========================================================= */
+    .toolbar {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 1120px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-title {
+      color: #f8fafc;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      background: rgba(197, 155, 39, 0.2);
+      color: #facc15;
+      border: 1px solid rgba(197, 155, 39, 0.4);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #c59b27, #e0b84c);
+      color: #0b1c3d;
+      border-color: #fce38a;
+      box-shadow: 0 4px 14px rgba(197, 155, 39, 0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #d4af37, #f3cd68);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(197, 155, 39, 0.5);
+    }
+
+    .btn-dark {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .btn-dark:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .btn-active {
+      background: rgba(197, 155, 39, 0.25);
+      border-color: #c59b27;
+      color: #fde68a;
+    }
+
+    .select-dropdown {
+      background: #1e293b;
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+    .select-dropdown:focus {
+      border-color: #c59b27;
+    }
+
+    /* Record Navigation */
+    .record-nav {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .record-nav button {
+      background: transparent;
+      border: none;
+      color: #f1f5f9;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .record-nav button:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .record-counter {
+      color: #94a3b8;
+      font-size: 0.78rem;
+      padding: 0 8px;
+      font-family: monospace;
+    }
+
+    /* =========================================================
+       CERTIFICATE STYLES - A4 LANDSCAPE PROPORTIONS
+       Native A4 Landscape: 297mm x 210mm (~1122.5px x 793.7px @96dpi)
+       ========================================================= */
+    .cert-viewport {
+      perspective: 1200px;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .cert-paper {
+      position: relative;
+      width: 1122px;
+      height: 793px;
+      background-color: var(--card-bg);
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.85) 0%, rgba(250, 248, 240, 0.6) 100%),
+        repeating-linear-gradient(45deg, rgba(197, 155, 39, 0.015) 0px, rgba(197, 155, 39, 0.015) 2px, transparent 2px, transparent 8px);
+      box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(0, 0, 0, 0.15);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      user-select: text;
+      overflow: hidden;
+      transform-origin: top center;
+    }
+
+    /* BORDERS & ORNAMENTATION */
+    .cert-border-outer {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      border: 3.5px solid var(--border-outer);
+      pointer-events: none;
+    }
+
+    .cert-border-middle {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      border: 1px solid var(--border-inner);
+      pointer-events: none;
+    }
+
+    .cert-border-inner {
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      right: 28px;
+      bottom: 28px;
+      border: 1px dashed rgba(197, 155, 39, 0.4);
+      pointer-events: none;
+    }
+
+    /* Corner SVG Filigrees */
+    .corner-filigree {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      pointer-events: none;
+      fill: var(--primary-gold);
+    }
+    .corner-filigree.top-left { top: 12px; left: 12px; }
+    .corner-filigree.top-right { top: 12px; right: 12px; transform: scaleX(-1); }
+    .corner-filigree.bottom-left { bottom: 12px; left: 12px; transform: scaleY(-1); }
+    .corner-filigree.bottom-right { bottom: 12px; right: 12px; transform: scale(-1); }
+
+    /* WATERMARK EMBLEM */
+    .cert-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 440px;
+      height: 440px;
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* =========================================================
+       CERTIFICATE CONTENT SECTIONS
+       ========================================================= */
+    .cert-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 42px;
+      text-align: center;
+    }
+
+    /* Top Metadata (Certificate Number & Verification) */
+    .cert-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0 10px;
+    }
+
+    .cert-no-tag {
+      color: var(--primary-navy);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: rgba(197, 155, 39, 0.12);
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(197, 155, 39, 0.3);
+    }
+
+    /* HEADER & UNIVERSITY EMBLEM */
+    .cert-header {
+      margin-top: 2px;
+    }
+
+    .cert-crest-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .cert-crest {
+      width: 58px;
+      height: 58px;
+    }
+
+    .inst-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--primary-navy);
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .inst-subname {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--primary-gold);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .inst-dept {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* TITLE / AWARD TYPE */
+    .cert-award-block {
+      margin: 10px 0 6px;
+    }
+
+    .cert-award-title {
+      font-family: 'Cinzel Decorative', 'Cinzel', serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: inline-block;
+      position: relative;
+    }
+
+    /* Gold divider lines */
+    .gold-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 6px auto;
+      max-width: 480px;
+    }
+    .gold-divider .line {
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+    }
+    .gold-divider .star {
+      color: var(--primary-gold);
+      font-size: 0.9rem;
+    }
+
+    .cert-certify-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.22rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    /* CANDIDATE NAME BLOCK */
+    .cert-candidate-block {
+      margin: 6px 0;
+    }
+
+    .candidate-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      letter-spacing: 0.04em;
+      display: inline-block;
+      padding: 0 28px 4px;
+      border-bottom: 2px solid var(--primary-gold);
+      min-width: 440px;
+      max-width: 820px;
+      line-height: 1.15;
+    }
+
+    /* BLANK PLACEHOLDER STATE */
+    .is-blank-state .candidate-name {
+      border-bottom: 2px dashed rgba(197, 155, 39, 0.7);
+      color: rgba(11, 28, 61, 0.4);
+      font-style: italic;
+    }
+
+    /* CITATION BODY PARAGRAPH */
+    .cert-body-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #334155;
+      max-width: 860px;
+      margin: 0 auto;
+      letter-spacing: 0.015em;
+    }
+
+    .cert-highlight {
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
+
+    .cert-event-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--primary-navy);
+      letter-spacing: 0.03em;
+    }
+
+    /* FOOTER & SIGNATURE SECTION */
+    .cert-footer {
+      display: grid;
+      grid-template-columns: 240px 1fr 240px;
+      align-items: flex-end;
+      gap: 16px;
+      margin-top: 14px;
+      padding: 0 10px;
+    }
+
+    .sig-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .sig-img-wrapper {
+      height: 48px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .sig-handwritten {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+      color: #0b1c3d;
+      transform: rotate(-3deg);
+      user-select: none;
+    }
+
+    .sig-line {
+      width: 190px;
+      height: 1.5px;
+      background: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .sig-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      letter-spacing: 0.02em;
+    }
+
+    .sig-title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* GOLDEN EMBOSSED SEAL (CENTER) */
+    .seal-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gold-seal-badge {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .seal-circle {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      box-shadow: 
+        0 6px 14px rgba(197, 155, 39, 0.4),
+        inset 0 0 0 2px #fff,
+        inset 0 0 0 4px #b8860b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .seal-inner-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      font-weight: 800;
+      color: #452c03;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      line-height: 1.15;
+    }
+
+    .seal-star {
+      color: #452c03;
+      font-size: 0.65rem;
+    }
+
+    .seal-ribbon {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 74px;
+      height: 38px;
+      z-index: 1;
+    }
+
+    .seal-caption {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--primary-gold);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* VERIFICATION BAR AT BOTTOM */
+    .cert-bottom-audit {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(197, 155, 39, 0.25);
+      padding-top: 6px;
+      margin-top: 4px;
+    }
+
+    .qr-badge-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* EDITABLE HIGHLIGHTING */
+    [contenteditable="true"] {
+      outline: 1px dashed rgba(197, 155, 39, 0.7);
+      background-color: rgba(254, 240, 138, 0.12);
+      border-radius: 3px;
+      cursor: text;
+      transition: background-color 0.15s;
+    }
+    [contenteditable="true"]:focus {
+      outline: 2px solid #c59b27;
+      background-color: rgba(254, 240, 138, 0.25);
+    }
+
+    /* =========================================================
+       PRINT SPECIFIC STYLES (PURE VECTOR, EXACT A4 LANDSCAPE)
+       ========================================================= */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 0mm;
+      }
+
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html, body {
+        width: 297mm !important;
+        height: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        overflow: hidden !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .cert-viewport {
+        width: 297mm !important;
+        height: 210mm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        transform: none !important;
+      }
+
+      .cert-paper {
+        width: 297mm !important;
+        height: 210mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      [contenteditable="true"] {
+        outline: none !important;
+        background: transparent !important;
+      }
+    }
+  </style>
+</head>
+<body class="theme-gold">
+
+  <!-- =========================================================
+       FLOATING INTERACTIVE TOOLBAR (HIDDEN DURING PRINT)
+       ========================================================= -->
+  <header class="toolbar no-print">
+    <div class="toolbar-left">
+      <div class="toolbar-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        <span>DISHA Certificate Engine</span>
+        <span class="badge">A4 Vector HTML/CSS</span>
+      </div>
+
+      <!-- Theme Switcher -->
+      <select id="themeSelect" class="select-dropdown" title="Select Certificate Color Theme">
+        <option value="theme-gold">Theme: Imperial Gold & Navy</option>
+        <option value="theme-emerald">Theme: Academic Emerald</option>
+        <option value="theme-burgundy">Theme: Regal Burgundy</option>
+        <option value="theme-minimal">Theme: Contemporary Minimal</option>
+      </select>
+
+      <!-- Award Type Preset -->
+      <select id="awardTypeSelect" class="select-dropdown" title="Award Type Preset">
+        <option value="PARTICIPATION">Certificate of Participation</option>
+        <option value="EXCELLENCE">Certificate of Excellence</option>
+        <option value="APPRECIATION">Certificate of Appreciation</option>
+        <option value="COMPLETION">Certificate of Completion</option>
+      </select>
+    </div>
+
+    <div class="toolbar-right">
+      <!-- Record Navigator (from sample_students.csv) -->
+      <div class="record-nav" title="Navigate Students from CSV">
+        <button id="btnPrevRecord" title="Previous Student">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <span id="recordIndicator" class="record-counter">1 / 13</span>
+        <button id="btnNextRecord" title="Next Student">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Blank / Filled Mode Toggle -->
+      <button id="btnToggleBlank" class="btn btn-dark" title="Toggle between prefilled student data and blank write-in template">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        </svg>
+        <span id="blankBtnText">Blank Template</span>
+      </button>
+
+      <!-- Live Inline Edit Mode -->
+      <button id="btnToggleEdit" class="btn btn-dark" title="Click directly on any text on the certificate to edit">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+        <span>Live Edit</span>
+      </button>
+
+      <!-- Print / Save as PDF Button -->
+      <button id="btnPrint" class="btn btn-primary" title="Print in pristine A4 Landscape or Save as High-Res PDF">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        <span>Print / Save PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       PRINTABLE CERTIFICATE SHEET (A4 LANDSCAPE: 297mm x 210mm)
+       ========================================================= -->
+  <main class="cert-viewport">
+    <article class="cert-paper" id="certificateSheet">
+      
+      <!-- Decorative Borders -->
+      <div class="cert-border-outer"></div>
+      <div class="cert-border-middle"></div>
+      <div class="cert-border-inner"></div>
+
+      <!-- Ornate Vector Filigree Corners -->
+      <svg class="corner-filigree top-left" viewBox="0 0 100 100">
+        <path d="M10,10 L90,10 C60,10 50,20 40,40 C30,60 20,60 10,90 Z M22,22 C35,22 45,30 50,45 C45,45 35,35 22,22 Z" />
+        <circle cx="20" cy="20" r="4" />
+      </svg>
+      <svg class="corner-filigree top-right" viewBox="0 0 100 100">
+        <path d="M10,10 L90,10 C60,10 50,20 40,40 C30,60 20,60 10,90 Z M22,22 C35,22 45,30 50,45 C45,45 35,35 22,22 Z" />
+        <circle cx="20" cy="20" r="4" />
+      </svg>
+      <svg class="corner-filigree bottom-left" viewBox="0 0 100 100">
+        <path d="M10,10 L90,10 C60,10 50,20 40,40 C30,60 20,60 10,90 Z M22,22 C35,22 45,30 50,45 C45,45 35,35 22,22 Z" />
+        <circle cx="20" cy="20" r="4" />
+      </svg>
+      <svg class="corner-filigree bottom-right" viewBox="0 0 100 100">
+        <path d="M10,10 L90,10 C60,10 50,20 40,40 C30,60 20,60 10,90 Z M22,22 C35,22 45,30 50,45 C45,45 35,35 22,22 Z" />
+        <circle cx="20" cy="20" r="4" />
+      </svg>
+
+      <!-- Background Watermark Emblem -->
+      <svg class="cert-watermark" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="6,4" />
+        <circle cx="100" cy="100" r="65" fill="none" stroke="currentColor" stroke-width="2" />
+        <polygon points="100,25 120,75 175,75 130,108 148,160 100,128 52,160 70,108 25,75 80,75" fill="none" stroke="currentColor" stroke-width="3" />
+      </svg>
+
+      <!-- ================= MAIN CERTIFICATE BODY ================= -->
+      <div class="cert-content">
+
+        <!-- Top Metadata & Verification -->
+        <div class="cert-top-bar">
+          <div>Ref: <span id="certRefNo" class="editable-field">MBM/CSE/2024/AI-HACK</span></div>
+          <div class="cert-no-tag">
+            Cert ID: <span id="certIdField" class="editable-field">24AI001</span>
+          </div>
+        </div>
+
+        <!-- Institutional Crest & Title -->
+        <header class="cert-header">
+          <div class="cert-crest-wrapper">
+            <!-- Vector University Seal / Crest -->
+            <svg class="cert-crest" viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id="crestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#bf953f" />
+                  <stop offset="50%" stop-color="#fcf6ba" />
+                  <stop offset="100%" stop-color="#aa771c" />
+                </linearGradient>
+              </defs>
+              <polygon points="50,4 92,26 92,74 50,96 8,74 8,26" fill="url(#crestGrad)" />
+              <polygon points="50,9 87,29 87,71 50,91 13,71 13,29" fill="#0b1c3d" />
+              <!-- Torch & Laurels -->
+              <circle cx="50" cy="42" r="14" fill="none" stroke="url(#crestGrad)" stroke-width="2.5" />
+              <path d="M50,22 L50,62 M42,48 L58,48" stroke="url(#crestGrad)" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M34,68 Q50,78 66,68" fill="none" stroke="url(#crestGrad)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <h1 class="inst-name editable-field" id="instNameField">MBM UNIVERSITY, JODHPUR</h1>
+          <div class="inst-subname editable-field" id="instSubField">FACULTY OF ENGINEERING & ARCHITECTURE</div>
+          <div class="inst-dept editable-field" id="deptField">DEPARTMENT OF COMPUTER SCIENCE & ENGINEERING</div>
+        </header>
+
+        <!-- Award Title -->
+        <div class="cert-award-block">
+          <h2 class="cert-award-title editable-field" id="awardTitleField">CERTIFICATE OF EXCELLENCE</h2>
+          <div class="gold-divider">
+            <span class="line"></span>
+            <span class="star">★</span>
+            <span class="star">✦</span>
+            <span class="star">★</span>
+            <span class="line"></span>
+          </div>
+          <div class="cert-certify-line editable-field" id="certifyLineField">This is proudly presented in recognition to</div>
+        </div>
+
+        <!-- Candidate Name -->
+        <div class="cert-candidate-block">
+          <div class="candidate-name editable-field" id="candidateNameField">KULDEEP SINGH</div>
+        </div>
+
+        <!-- Citation Body Text -->
+        <p class="cert-body-text">
+          student of <span class="cert-highlight editable-field" id="studentYearField">III Year</span>, Department of <span class="cert-highlight editable-field" id="studentBranchField">Computer Science & Engineering</span>, for securing <span class="cert-highlight editable-field" id="awardCategoryField">1st Place</span> in the <span class="cert-event-title editable-field" id="eventTitleField">National Hackathon on Generative AI & Autonomous Agents</span> organized by Department of Computer Science & Engineering, MBM University, Jodhpur held on <span class="cert-highlight editable-field" id="eventDateField">October 18, 2024</span>.
+        </p>
+
+        <!-- Footer Signatures & Gold Seal -->
+        <div class="cert-footer">
+          <!-- Signature Left: Convener -->
+          <div class="sig-col">
+            <div class="sig-img-wrapper">
+              <span class="sig-handwritten editable-field" id="sig1Img">Abhisek Gour</span>
+            </div>
+            <div class="sig-line"></div>
+            <div class="sig-name editable-field" id="sig1Name">Sh. Abhisek Gour</div>
+            <div class="sig-title editable-field" id="sig1Title">Convener, Workshop</div>
+          </div>
+
+          <!-- Official Gold Seal in Center -->
+          <div class="seal-col">
+            <div class="gold-seal-badge">
+              <!-- Golden Ribbon Tails -->
+              <svg class="seal-ribbon" viewBox="0 0 100 50">
+                <path d="M20,0 L35,50 L50,30 L65,50 L80,0 Z" fill="#b8860b" />
+                <path d="M25,0 L38,44 L50,28 L62,44 L75,0 Z" fill="#d4af37" />
+              </svg>
+              <!-- 3D Gold Seal -->
+              <div class="seal-circle">
+                <span class="seal-star">★ ★ ★</span>
+                <span class="seal-inner-text">OFFICIAL<br>CREDENTIAL</span>
+                <span class="seal-star">★ ★ ★</span>
+              </div>
+            </div>
+            <div class="seal-caption editable-field" id="sealCaption">DISHA CERTIFIED</div>
+          </div>
+
+          <!-- Signature Right: Head of Department -->
+          <div class="sig-col">
+            <div class="sig-img-wrapper">
+              <span class="sig-handwritten editable-field" id="sig2Img">Shrwan Ram</span>
+            </div>
+            <div class="sig-line"></div>
+            <div class="sig-name editable-field" id="sig2Name">Prof. Shrwan Ram</div>
+            <div class="sig-title editable-field" id="sig2Title">Head, Department of CSE</div>
+          </div>
+        </div>
+
+        <!-- Audit & Verification URL Bar -->
+        <div class="cert-bottom-audit">
+          <div class="qr-badge-inline">
+            <!-- Vector QR Code Glyph -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h2v2h-2v-2zm-4 0h2v2h-2v-2zm2 2h2v2h-2v-2zm2 2h2v2h-2v-2zm-4 2h2v2h-2v-2zm4 0h2v2h-2v-2zm2-2h2v2h-2v-2zM5 5h2v2H5V5zm12 0h2v2h-2V5zM5 17h2v2H5v-2z"/>
+            </svg>
+            <span>Verify online at: <strong class="editable-field" id="verifyUrlField">https://disha.mbm.ac.in/ecertificates?cert=24CVSCB001</strong></span>
+          </div>
+          <div>Issued with Institutional Cryptographic Verification Token</div>
+        </div>
+
+      </div>
+    </article>
+  </main>
+
+  <!-- =========================================================
+       DYNAMIC SCRIPT FOR INTERACTION & CSV DEMO
+       ========================================================= -->
+  <script>
+    // Updated student & event dataset (Preserving university, names, and signatures)
+    const studentsData = [
+      { cert_no: "24AI001", name: "Kuldeep Singh", branch: "Computer Science & Engineering", year: "III Year", event: "National Hackathon on Generative AI & Autonomous Agents", date: "October 18, 2024", certificate_type: "Excellence (1st Place)" },
+      { cert_no: "24AI002", name: "Mohit Gaur", branch: "Information Technology", year: "III Year", event: "National Hackathon on Generative AI & Autonomous Agents", date: "October 18, 2024", certificate_type: "Excellence (2nd Place)" },
+      { cert_no: "24AI003", name: "Jinal Soni", branch: "Computer Science & Engineering", year: "II Year", event: "Advanced Cloud Computing & Kubernetes Masterclass", date: "September 22, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI004", name: "Bhavesh Tak", branch: "Building & Construction Engineering", year: "II Year", event: "Smart Infrastructure & IoT Automation Symposium", date: "September 15, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI005", name: "Rohan Mangal", branch: "Information Technology", year: "III Year", event: "Cybersecurity Defense & Ethical Hacking Bootcamp", date: "August 30, 2024", certificate_type: "Merit" },
+      { cert_no: "24AI006", name: "Sanjay Jakhar", branch: "Mechanical Engineering", year: "IV Year", event: "Robotics & Industrial Automation Summit", date: "August 14, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI007", name: "Jatin Saini", branch: "Electronics & Communication Engineering", year: "III Year", event: "Embedded Systems & Edge AI Workshop", date: "July 28, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI008", name: "Mridul Bansal", branch: "Information Technology", year: "II Year", event: "Full Stack Web & Distributed Systems Bootcamp", date: "July 15, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI009", name: "Nishtha Jain", branch: "Electronics & Computer Engineering", year: "II Year", event: "National Hackathon on Generative AI & Autonomous Agents", date: "October 18, 2024", certificate_type: "Excellence (3rd Place)" },
+      { cert_no: "24AI010", name: "Riya Shekhawat", branch: "Electronics & Electrical Engineering", year: "II Year", event: "Renewable Energy Systems & Smart Grid Workshop", date: "June 30, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI011", name: "Yuvadhan Singh Rutia", branch: "Electrical Engineering", year: "III Year", event: "Electric Vehicle Powertrain & Battery Tech Workshop", date: "June 18, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI012", name: "Ketan", branch: "Computer Science & Engineering", year: "III Year", event: "DevOps CI/CD & Microservices Architecture Workshop", date: "May 25, 2024", certificate_type: "Participation" },
+      { cert_no: "24AI013", name: "Mayank Aggarwal", branch: "Computer Science & Engineering", year: "II Year", event: "National Hackathon on Generative AI & Autonomous Agents", date: "October 18, 2024", certificate_type: "Participation" }
+    ];
+
+    let currentIndex = 0;
+    let isBlankMode = false;
+    let isLiveEditActive = false;
+
+    // DOM Elements
+    const certificateSheet = document.getElementById('certificateSheet');
+    const candidateNameField = document.getElementById('candidateNameField');
+    const studentYearField = document.getElementById('studentYearField');
+    const studentBranchField = document.getElementById('studentBranchField');
+    const eventTitleField = document.getElementById('eventTitleField');
+    const eventDateField = document.getElementById('eventDateField');
+    const certIdField = document.getElementById('certIdField');
+    const verifyUrlField = document.getElementById('verifyUrlField');
+    const recordIndicator = document.getElementById('recordIndicator');
+    const awardTitleField = document.getElementById('awardTitleField');
+    const awardCategoryField = document.getElementById('awardCategoryField');
+    const blankBtnText = document.getElementById('blankBtnText');
+    const btnToggleBlank = document.getElementById('btnToggleBlank');
+    const btnToggleEdit = document.getElementById('btnToggleEdit');
+
+    // Render Student Data
+    function renderStudent(index) {
+      if (isBlankMode) return;
+      const s = studentsData[index];
+      candidateNameField.textContent = s.name.toUpperCase();
+      studentYearField.textContent = s.year;
+      studentBranchField.textContent = s.branch;
+      eventTitleField.textContent = s.event;
+      eventDateField.textContent = s.date;
+      certIdField.textContent = s.cert_no;
+      verifyUrlField.textContent = `https://disha.mbm.ac.in/ecertificates?cert=${s.cert_no}`;
+      recordIndicator.textContent = `${index + 1} / ${studentsData.length}`;
+      
+      // Update Award Title based on certificate_type
+      if (s.certificate_type.includes('Excellence')) {
+        awardTitleField.textContent = 'CERTIFICATE OF EXCELLENCE';
+        if (awardCategoryField) awardCategoryField.textContent = s.certificate_type;
+      } else if (s.certificate_type.includes('Merit')) {
+        awardTitleField.textContent = 'CERTIFICATE OF MERIT';
+        if (awardCategoryField) awardCategoryField.textContent = 'High Merit Standing';
+      } else {
+        awardTitleField.textContent = 'CERTIFICATE OF PARTICIPATION';
+        if (awardCategoryField) awardCategoryField.textContent = 'Active Participation';
+      }
+    }
+
+    // Set to Blank Template Mode
+    function setBlankTemplate(blank) {
+      isBlankMode = blank;
+      if (isBlankMode) {
+        certificateSheet.classList.add('is-blank-state');
+        candidateNameField.textContent = "______________________________";
+        studentYearField.textContent = "_____";
+        studentBranchField.textContent = "_________________________";
+        eventTitleField.textContent = "[ Event / Workshop Title ]";
+        eventDateField.textContent = "[ Date / Duration ]";
+        certIdField.textContent = "MBM-YYYY-XXXX";
+        verifyUrlField.textContent = "https://disha.mbm.ac.in/ecertificates?cert={CERT_NO}";
+        blankBtnText.textContent = "Load Student Data";
+        btnToggleBlank.classList.add('btn-active');
+      } else {
+        certificateSheet.classList.remove('is-blank-state');
+        blankBtnText.textContent = "Blank Template";
+        btnToggleBlank.classList.remove('btn-active');
+        renderStudent(currentIndex);
+      }
+    }
+
+    // Previous / Next Record Handlers
+    document.getElementById('btnPrevRecord').addEventListener('click', () => {
+      if (isBlankMode) setBlankTemplate(false);
+      currentIndex = (currentIndex - 1 + studentsData.length) % studentsData.length;
+      renderStudent(currentIndex);
+    });
+
+    document.getElementById('btnNextRecord').addEventListener('click', () => {
+      if (isBlankMode) setBlankTemplate(false);
+      currentIndex = (currentIndex + 1) % studentsData.length;
+      renderStudent(currentIndex);
+    });
+
+    // Toggle Blank Mode Button
+    btnToggleBlank.addEventListener('click', () => {
+      setBlankTemplate(!isBlankMode);
+    });
+
+    // Live Edit Mode Toggle
+    btnToggleEdit.addEventListener('click', () => {
+      isLiveEditActive = !isLiveEditActive;
+      const editables = document.querySelectorAll('.editable-field');
+      editables.forEach(el => {
+        el.setAttribute('contenteditable', isLiveEditActive ? 'true' : 'false');
+      });
+      if (isLiveEditActive) {
+        btnToggleEdit.classList.add('btn-active');
+        btnToggleEdit.querySelector('span').textContent = 'Editing Active';
+      } else {
+        btnToggleEdit.classList.remove('btn-active');
+        btnToggleEdit.querySelector('span').textContent = 'Live Edit';
+      }
+    });
+
+    // Theme Switcher
+    document.getElementById('themeSelect').addEventListener('change', (e) => {
+      document.body.className = e.target.value;
+    });
+
+    // Award Type Preset Switcher
+    document.getElementById('awardTypeSelect').addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val === 'PARTICIPATION') {
+        awardTitleField.textContent = 'CERTIFICATE OF PARTICIPATION';
+      } else if (val === 'EXCELLENCE') {
+        awardTitleField.textContent = 'CERTIFICATE OF EXCELLENCE';
+      } else if (val === 'APPRECIATION') {
+        awardTitleField.textContent = 'CERTIFICATE OF APPRECIATION';
+      } else if (val === 'COMPLETION') {
+        awardTitleField.textContent = 'CERTIFICATE OF COMPLETION';
+      }
+    });
+
+    // Print Button
+    document.getElementById('btnPrint').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Initialize first record
+    renderStudent(currentIndex);
+  </script>
+</body>
+</html>
